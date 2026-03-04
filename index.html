@@ -370,9 +370,10 @@
                         <div class="frame-box-game">
                             <div class="text-area">
                                 <div class="text-area--content">
-                                    <h2>Changelog (03/03/2026 @ 7:52 AM)<span style="background: linear-gradient(135deg, #20d43b, #1b9c6d); color: #fff; padding: 2px 8px; border-radius: 12px; font-size: 16px; font-weight: 600; margin-left: 4px; vertical-align: middle;">NEW!</span></h2>
+                                    <h2>Changelog (03/04/2026 @ 7:13 AM)<span style="background: linear-gradient(135deg, #20d43b, #1b9c6d); color: #fff; padding: 2px 8px; border-radius: 12px; font-size: 16px; font-weight: 600; margin-left: 4px; vertical-align: middle;">NEW!</span></h2>
                                     <ol>
                                         <li style="font-weight: normal;">Added the ability to favorite games on the front page</li>
+                                        <li style="font-weight: normal;">Games are now sorted by alphabetical order for those lazy to type 💔</li>
                                         <li style="font-weight: normal;">Resolved other visual issues</li>
                                     </ol>
                                 </div>
@@ -505,7 +506,7 @@
                     
                     if (aIsFav && !bIsFav) return -1;
                     if (!aIsFav && bIsFav) return 1;
-                    return 0;
+                    return a.name.localeCompare(b.name);
                 });
 
                 sortedGames.forEach(game => {
