@@ -2463,6 +2463,11 @@
         {
             "file": "lesson-2306.html",
             "name": "Color Spin"
+        },
+        {
+            "file": "lesson-2307.html",
+            "name": "Balatro GBA",
+            "image": "/icons/balatro.jpg"
         }
     ]
 }
