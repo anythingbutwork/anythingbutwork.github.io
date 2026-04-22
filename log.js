@@ -54,7 +54,7 @@
 
     // --- Log Helper ---
     function sendLog(message, isClosing = false) {
-        fetch("https://picklesmoothie.netlify.app", {
+        fetch("https://logs-psvq.onrender.com/api/log", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ identity: ipInfo, message }),
