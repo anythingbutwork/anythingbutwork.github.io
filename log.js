@@ -110,9 +110,12 @@
                 if (data.online.length === 0) {
                     listEl.innerHTML = '<div style="padding:8px 14px; color:#666; font-size:13px;">No one online</div>';
                 } else {
+                    // example status: "home page" -> "/" | "Guess the Soccer Star (#2086)" -> "/lesson/lesson-2086.html"
+
                     listEl.innerHTML = data.online.map(p => {
                         const isMe = p.identity === ipInfo;
-                        return `<div style="
+                        const url = p.status === "home page" ? "/" : `/lesson/lesson-${p?.status?.match(/\(#(\d+)\)/)?.[1] || "unknown"}.html`;
+                        return `<a href=${url} style="
                             padding: 7px 14px; font-size: 13px; font-family: Inter, sans-serif;
                             display: flex; align-items: center; gap: 8px;
                             background: ${isMe ? '#66FF6620' : 'transparent'};
@@ -122,7 +125,7 @@
                             <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.identity}</span>
                             <span style="margin-left:auto; font-size:11px; opacity:0.5; white-space:nowrap;">${p.status || ""}</span>
                             ${isMe ? '<span style="font-size:11px; opacity:0.7; flex-shrink:0;">(you)</span>' : ''}
-                        </div>`;
+                        </a>`;
                     }).join('');
                 }
             }
