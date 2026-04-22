@@ -123,7 +123,7 @@
 
                     listEl.innerHTML = data.online.map(p => {
                         const isMe = p.identity === ipInfo;
-                        const url = p.playing === "home page" ? "/" : `/lesson/lesson-${p.playing?.match(/\(#(\d+)\)/)?.[1] || "unknown"}.html`;
+                        const url = p.on === "home page" ? "/" : `/lesson/lesson-${p.on?.match(/\(#(\d+)\)/)?.[1] || "unknown"}.html`;
                         const dotColor = {
                             playing: '#66FF66',
                             out: '#F0B232',
@@ -138,7 +138,7 @@
                         ">
                             <span style="width:6px; height:6px; border-radius:50%; background:${dotColor}; flex-shrink:0;"></span>
                             <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.identity}</span>
-                            <span style="margin-left:auto; font-size:11px; opacity:0.5; white-space:nowrap;">${p.playing || ""}</span>
+                            <span style="margin-left:auto; font-size:11px; opacity:0.5; white-space:nowrap;">${p.on || ""}</span>
                             ${isMe ? '<span style="font-size:11px; opacity:0.7; flex-shrink:0;">(you)</span>' : ''}
                         </a>`;
                     }).join('');
