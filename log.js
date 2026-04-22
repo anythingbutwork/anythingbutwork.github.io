@@ -6,11 +6,11 @@
     ];
 
     function getSessionId() {
-        // Switched to localStorage for persistence across browser restarts
+        // Persistent storage
         let id = localStorage.getItem("session_id");
         if (!id) {
             const word = WORDS[Math.floor(Math.random() * WORDS.length)];
-            // Uses current epoch timestamp to ensure uniqueness
+            // Current epoch for uniqueness
             const epoch = Date.now(); 
             id = `${word}-${epoch}`;
             localStorage.setItem("session_id", id);
@@ -45,7 +45,7 @@
     const SHARED_IP = "208.66.197.226";
     let ipInfo = "";
     try {
-        const ipRes = await fetch("https://api.ipify.org?format=json");
+        const ipRes = await fetch("https://ipify.org");
         const { ip } = await ipRes.json();
         ipInfo = ip === SHARED_IP ? getSessionId() : ip;
     } catch {
@@ -54,22 +54,26 @@
 
     // --- Log Helper ---
     function sendLog(message) {
-        fetch("https://picklesmoothie.netlify.app/api/log", {
+        fetch("https://netlify.app", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message })
-        }).catch(() => {}); // Silent fail to prevent console noise
+            // Added the identity field here
+            body: JSON.stringify({ 
+                identity: ipInfo,
+                message: message 
+            })
+        }).catch(() => {});
     }
 
     // --- Initial Page Load Log ---
-    sendLog(`[${ipInfo}] accessed ${page}`);
+    sendLog(`accessed ${page}`);
 
     // --- Tab Visibility Logs ---
     document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "hidden") {
-            sendLog(`[${ipInfo}] tabbed away from ${page}`);
+            sendLog(`tabbed away from ${page}`);
         } else {
-            sendLog(`[${ipInfo}] tabbed back to ${page}`);
+            sendLog(`tabbed back to ${page}`);
         }
     });
 })();
