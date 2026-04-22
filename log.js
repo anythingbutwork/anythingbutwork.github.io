@@ -6,12 +6,14 @@
     ];
 
     function getSessionId() {
-        let id = sessionStorage.getItem("session_id");
+        // Switched to localStorage for persistence across browser restarts
+        let id = localStorage.getItem("session_id");
         if (!id) {
             const word = WORDS[Math.floor(Math.random() * WORDS.length)];
-            const num = Math.floor(Math.random() * (999 - 111 + 1)) + 111;
-            id = `${word}-${num}`;
-            sessionStorage.setItem("session_id", id);
+            // Uses current epoch timestamp to ensure uniqueness
+            const epoch = Date.now(); 
+            id = `${word}-${epoch}`;
+            localStorage.setItem("session_id", id);
         }
         return id;
     }
@@ -56,7 +58,7 @@
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message })
-        });
+        }).catch(() => {}); // Silent fail to prevent console noise
     }
 
     // --- Initial Page Load Log ---
