@@ -138,7 +138,7 @@
                         ">
                             <span style="width:6px; height:6px; border-radius:50%; background:${dotColor}; flex-shrink:0;"></span>
                             <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.identity}</span>
-                            <span style="margin-left:auto; font-size:11px; opacity:0.5; white-space:nowrap;">${p.on || ""}</span>
+                            <span style="margin-left:auto; font-size:11px; font-weight: lighter; opacity:0.5; white-space:nowrap;">${p.on || ""}</span>
                             ${isMe ? '<span style="font-size:11px; opacity:0.7; flex-shrink:0;">(you)</span>' : ''}
                         </a>`;
                     }).join('');
