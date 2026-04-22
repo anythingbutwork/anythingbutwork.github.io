@@ -121,7 +121,10 @@
                 } else {
                     // example status: "home page" -> "/" | "Guess the Soccer Star (#2086)" -> "/lesson/lesson-2086.html"
 
-                    listEl.innerHTML = data.online.map(p => {
+                    const STATUS_ORDER = { playing: 0, out: 1, home: 2, offline: 3 };
+                    const sorted = [...data.online].sort((a, b) => (STATUS_ORDER[a.status] ?? 4) - (STATUS_ORDER[b.status] ?? 4));
+
+                    listEl.innerHTML = sorted.map(p => {
                         const isMe = p.identity === ipInfo;
                         const url = p.on === "home page" ? "/" : `/lesson/lesson-${p.on?.match(/\(#(\d+)\)/)?.[1] || "unknown"}.html`;
                         const dotColor = {
