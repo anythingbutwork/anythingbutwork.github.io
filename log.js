@@ -86,10 +86,19 @@
 
     // --- Ping ---
     function sendPing() {
+        const tabbed = document.visibilityState === 'visible';
+        const onGame = window.location.pathname.startsWith('/lesson/');
+
+        let status;
+        if (!tabbed && !onGame) status = 'offline';
+        else if (!tabbed) status = 'out';
+        else if (onGame) status = 'playing';
+        else status = 'home';
+
         fetch("https://logs-psvq.onrender.com/api/ping", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ identity: ipInfo, status: page })
+            body: JSON.stringify({ identity: ipInfo, status, on: page })
         }).catch(() => {});
     }
 
@@ -114,16 +123,22 @@
 
                     listEl.innerHTML = data.online.map(p => {
                         const isMe = p.identity === ipInfo;
-                        const url = p.status === "home page" ? "/" : `/lesson/lesson-${p?.status?.match(/\(#(\d+)\)/)?.[1] || "unknown"}.html`;
+                        const url = p.playing === "home page" ? "/" : `/lesson/lesson-${p.playing?.match(/\(#(\d+)\)/)?.[1] || "unknown"}.html`;
+                        const dotColor = {
+                            playing: '#66FF66',
+                            out: '#F0B232',
+                            home: '#aaa',
+                            offline: '#FF6666',
+                        }[p.status] ?? '#aaa';
                         return `<a href=${url} style="
                             padding: 7px 14px; font-size: 13px; font-family: Inter, sans-serif;
                             display: flex; align-items: center; gap: 8px;
                             background: ${isMe ? '#66FF6620' : 'transparent'};
                             color: ${isMe ? '#66FF66' : '#ccc'};
                         ">
-                            <span style="width:6px; height:6px; border-radius:50%; background:#66FF66; flex-shrink:0;"></span>
+                            <span style="width:6px; height:6px; border-radius:50%; background:${dotColor}; flex-shrink:0;"></span>
                             <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.identity}</span>
-                            <span style="margin-left:auto; font-size:11px; opacity:0.5; white-space:nowrap;">${p.status || ""}</span>
+                            <span style="margin-left:auto; font-size:11px; opacity:0.5; white-space:nowrap;">${p.playing || ""}</span>
                             ${isMe ? '<span style="font-size:11px; opacity:0.7; flex-shrink:0;">(you)</span>' : ''}
                         </a>`;
                     }).join('');
