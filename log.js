@@ -127,18 +127,21 @@
                         const dotColor = {
                             playing: '#66FF66',
                             out: '#F0B232',
-                            home: '#aaa',
+                            home: '#66BBFF',
                             offline: '#FF6666',
                         }[p.status] ?? '#aaa';
+                        // FIX 2: added min-width:0 to flex children so the game name label
+                        // doesn't get squeezed out when the identity string is long
                         return `<a href=${url} style="
                             padding: 7px 14px; font-size: 13px; font-family: Inter, sans-serif;
                             display: flex; align-items: center; gap: 8px;
                             background: ${isMe ? '#66FF6620' : 'transparent'};
                             color: ${isMe ? '#66FF66' : '#ccc'};
+                            text-decoration: none;
                         ">
                             <span style="width:6px; height:6px; border-radius:50%; background:${dotColor}; flex-shrink:0;"></span>
-                            <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.identity}</span>
-                            <span style="margin-left:auto; font-size:11px; font-weight: lighter; opacity:0.5; white-space:nowrap;">${p.on || ""}</span>
+                            <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; flex:1;">${p.identity}</span>
+                            <span style="flex-shrink:0; font-size:11px; font-weight:lighter; opacity:0.5; white-space:nowrap;">${p.on || ""}</span>
                             ${isMe ? '<span style="font-size:11px; opacity:0.7; flex-shrink:0;">(you)</span>' : ''}
                         </a>`;
                     }).join('');
