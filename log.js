@@ -53,33 +53,33 @@
     }
 
     // --- Log Helper ---
-    function sendLog(message) {
-        fetch("https://picklesmoothie.netlify.app/api/log", {
+    function sendLog(message, isClosing = false) {
+        fetch("https://picklesmoothie.netlify.app", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            // Added the identity field here
-            body: JSON.stringify({ 
-                identity: ipInfo,
-                message: message 
-            })
+            body: JSON.stringify({ identity: ipInfo, message }),
+            keepalive: isClosing 
         }).catch(() => {});
     }
 
-    let isNavigating = false;
-    window.addEventListener("beforeunload", () => {
-        isNavigating = true;
-    });
-    
-    // --- Initial Page Load Log ---
+    let isLeaving = false;
+
     sendLog(`accessed ${page}`);
 
-    // --- Tab Visibility Logs ---
+    // Flag navigation or tab closure
+    window.addEventListener("beforeunload", () => { isLeaving = true; });
+    window.addEventListener("pagehide", () => { 
+        isLeaving = true; 
+        sendLog(`left ${page}`, true); 
+    });
+
     document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "hidden") {
-            if (!isNavigating) {
-                sendLog(`tabbed away from ${page}`);
-            }
+            // Only log "tabbed away" if they aren't navigating/closing
+            if (!isLeaving) sendLog(`tabbed away from ${page}`);
         } else {
+            // If they come back, reset the flag
+            isLeaving = false; 
             sendLog(`tabbed back to ${page}`);
         }
     });
