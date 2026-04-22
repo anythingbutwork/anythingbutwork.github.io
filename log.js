@@ -54,7 +54,7 @@
 
     // --- Log Helper ---
     function sendLog(message) {
-        fetch("https://netlify.app", {
+        fetch("https://picklesmoothie.netlify.app/api/log", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             // Added the identity field here
