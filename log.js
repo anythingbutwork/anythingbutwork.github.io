@@ -1,9 +1,27 @@
 (async () => {
+    // --- Session Identity ---
+    const WORDS = [
+        "Notebook", "Pencil", "Eraser", "Stapler", "Binder", "Marker",
+        "Compass", "Ruler", "Scissors", "Highlighter", "Folder", "Clipboard"
+    ];
+
+    function getSessionId() {
+        let id = sessionStorage.getItem("session_id");
+        if (!id) {
+            const word = WORDS[Math.floor(Math.random() * WORDS.length)];
+            const num = Math.floor(Math.random() * (999 - 111 + 1)) + 111;
+            id = `${word}-${num}`;
+            sessionStorage.setItem("session_id", id);
+        }
+        return id;
+    }
+
+    // --- Page Resolution ---
     const path = window.location.pathname;
-    let message;
+    let page;
 
     if (path === "/" || path === "/index.html") {
-        message = "accessed home page";
+        page = "home page";
     } else {
         const match = path.match(/\/lesson\/lesson-(\d+)\.html/);
         if (match) {
@@ -12,19 +30,44 @@
                 const res = await fetch("/lessons.json");
                 const data = await res.json();
                 const lesson = data.lessons.find(l => l.file === `lesson-${gameId}.html`);
-                const gameName = lesson ? lesson.name : "Unknown";
-                message = `accessed ${gameName} (${gameId})`;
+                page = lesson ? `${lesson.name} (lesson ${gameId})` : `lesson ${gameId}`;
             } catch {
-                message = `accessed lesson ${gameId} (lessons.json unavailable)`;
+                page = `lesson ${gameId} (lessons.json unavailable)`;
             }
         } else {
-            message = `accessed unknown page: ${path}`;
+            page = `unknown page: ${path}`;
         }
     }
 
-    fetch("https://picklesmoothie.netlify.app/api/log", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message })
+    // --- IP + Identity ---
+    const SHARED_IP = "208.66.197.226";
+    let ipInfo = "";
+    try {
+        const ipRes = await fetch("https://api.ipify.org?format=json");
+        const { ip } = await ipRes.json();
+        ipInfo = ip === SHARED_IP ? getSessionId() : ip;
+    } catch {
+        ipInfo = getSessionId();
+    }
+
+    // --- Log Helper ---
+    function sendLog(message) {
+        fetch("https://picklesmoothie.netlify.app/api/log", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message })
+        });
+    }
+
+    // --- Initial Page Load Log ---
+    sendLog(`[${ipInfo}] accessed ${page}`);
+
+    // --- Tab Visibility Logs ---
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "hidden") {
+            sendLog(`[${ipInfo}] tabbed away from ${page}`);
+        } else {
+            sendLog(`[${ipInfo}] tabbed back to ${page}`);
+        }
     });
 })();
