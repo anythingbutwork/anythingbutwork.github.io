@@ -83,4 +83,29 @@
             sendLog(`tabbed back to ${page}`);
         }
     });
+
+    // --- Ping ---
+    function sendPing() {
+        fetch("https://logs-psvq.onrender.com/api/ping", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ identity: ipInfo })
+        }).catch(() => {});
+    }
+
+    sendPing();
+    setInterval(sendPing, 60_000); // ping every 60s (well within the 120s TTL)
+
+    // --- Online Count ---
+    async function refreshOnlineCount() {
+        try {
+            const res = await fetch("https://logs-psvq.onrender.com/api/online");
+            const data = await res.json();
+            const el = document.getElementById("onlineCount");
+            if (el) el.textContent = data.count + " players online";
+        } catch {}
+    }
+
+    refreshOnlineCount();
+    setInterval(refreshOnlineCount, 30_000);
 })();
