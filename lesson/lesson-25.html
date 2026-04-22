@@ -260,10 +260,18 @@
 
                     <ul class="menu">
                             <li>
-                                <a href="#" style="display:flex; align-items:center; gap:6px; cursor:default;">
+                                <a href="#" id="onlineToggle" style="display:flex; align-items:center; gap:6px;" onclick="toggleOnlinePanel(event)">
                                     <span style="width:8px; height:8px; background:#22c55e; border-radius:50%; display:inline-block; box-shadow:0 0 6px #22c55e;"></span>
                                     <span id="onlineCount">— players online</span>
                                 </a>
+                                <div id="onlinePanel" style="
+                                    display:none; position:absolute; top:calc(100% + 8px); left:0;
+                                    background:#1a1a1a; border:1px solid #333; border-radius:8px;
+                                    min-width:220px; padding:8px 0; z-index:100;
+                                    box-shadow:0 4px 16px rgba(0,0,0,0.4);
+                                ">
+                                    <div id="onlineList" style="max-height:260px; overflow-y:auto;"></div>
+                                </div>
                             </li>
                             <li><a href="/classroom/new.html">New</a></li>
                             <li><a href="/classroom/popular.html">Hot</a></li>
