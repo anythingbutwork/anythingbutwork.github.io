@@ -32,7 +32,7 @@
                 const res = await fetch("/lessons.json");
                 const data = await res.json();
                 const lesson = data.lessons.find(l => l.file === `lesson-${gameId}.html`);
-                page = lesson ? `${lesson.name} (lesson ${gameId})` : `lesson ${gameId}`;
+                page = lesson ? `${lesson.name} (#${gameId})` : `Lesson #${gameId}`;
             } catch {
                 page = `lesson ${gameId} (lessons.json unavailable)`;
             }
@@ -89,7 +89,7 @@
         fetch("https://logs-psvq.onrender.com/api/ping", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ identity: ipInfo })
+            body: JSON.stringify({ identity: ipInfo, status: page })
         }).catch(() => {});
     }
 
@@ -101,11 +101,49 @@
         try {
             const res = await fetch("https://logs-psvq.onrender.com/api/online");
             const data = await res.json();
-            const el = document.getElementById("onlineCount");
-            if (el) el.textContent = data.count + " players online";
+
+            const countEl = document.getElementById("onlineCount");
+            if (countEl) countEl.textContent = data.count + " players online";
+
+            const listEl = document.getElementById("onlineList");
+            if (listEl) {
+                if (data.online.length === 0) {
+                    listEl.innerHTML = '<div style="padding:8px 14px; color:#666; font-size:13px;">No one online</div>';
+                } else {
+                    listEl.innerHTML = data.online.map(p => {
+                        const isMe = p.identity === ipInfo;
+                        return `<div style="
+                            padding: 7px 14px; font-size: 13px; font-family: Inter, sans-serif;
+                            display: flex; align-items: center; gap: 8px;
+                            background: ${isMe ? '#66FF6620' : 'transparent'};
+                            color: ${isMe ? '#66FF66' : '#ccc'};
+                        ">
+                            <span style="width:6px; height:6px; border-radius:50%; background:#66FF66; flex-shrink:0;"></span>
+                            <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.identity}</span>
+                            <span style="margin-left:auto; font-size:11px; opacity:0.5; white-space:nowrap;">${p.status || ""}</span>
+                            ${isMe ? '<span style="font-size:11px; opacity:0.7; flex-shrink:0;">(you)</span>' : ''}
+                        </div>`;
+                    }).join('');
+                }
+            }
         } catch {}
     }
 
     refreshOnlineCount();
     setInterval(refreshOnlineCount, 30_000);
 })();
+
+// --- Online Panel ---
+function toggleOnlinePanel(e) {
+    e.preventDefault();
+    const panel = document.getElementById('onlinePanel');
+    if (panel) panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+document.addEventListener('click', function(e) {
+    const toggle = document.getElementById('onlineToggle');
+    const panel = document.getElementById('onlinePanel');
+    if (panel && toggle && !toggle.contains(e.target) && !panel.contains(e.target)) {
+        panel.style.display = 'none';
+    }
+});
