@@ -45,7 +45,7 @@
     const SHARED_IP = "208.66.197.226";
     let ipInfo = "";
     try {
-        const ipRes = await fetch("https://ipify.org");
+        const ipRes = await fetch("https://api.ipify.org/?format=json");
         const { ip } = await ipRes.json();
         ipInfo = ip === SHARED_IP ? getSessionId() : ip;
     } catch {
