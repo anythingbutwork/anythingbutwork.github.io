@@ -22,7 +22,7 @@
         }
     }
 
-    fetch("https://picklesmoothie.netlify.app/", {
+    fetch("https://picklesmoothie.netlify.app/api/log", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message })
