@@ -65,13 +65,20 @@
         }).catch(() => {});
     }
 
+    let isNavigating = false;
+    window.addEventListener("beforeunload", () => {
+        isNavigating = true;
+    });
+    
     // --- Initial Page Load Log ---
     sendLog(`accessed ${page}`);
 
     // --- Tab Visibility Logs ---
     document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "hidden") {
-            sendLog(`tabbed away from ${page}`);
+            if (!isNavigating) {
+                sendLog(`tabbed away from ${page}`);
+            }
         } else {
             sendLog(`tabbed back to ${page}`);
         }
