@@ -3,14 +3,6 @@ html {
     font-family: "Inter", system-ui, sans-serif;
 }
 
-hr {
-    border: none;
-    border-top: 2px solid white;
-    border-radius: 100px;
-    opacity: 25%;
-    margin: 5px 0;
-}
-
 ul {
     list-style: none;
     padding-left: 0;
@@ -34,6 +26,14 @@ li::before {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+}
+
+.divider {
+    border: none;
+    border-top: 2px solid white;
+    border-radius: 100px;
+    opacity: 25%;
+    margin: 5px 0;
 }
 
 .nav-link {

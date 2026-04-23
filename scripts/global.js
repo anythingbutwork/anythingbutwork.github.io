@@ -6,8 +6,7 @@ tailwind.config = {
             },
             colors: {
                 bg: "#111111",
-                card: "#1a1a1a",
-                accent: "#22c55e"
+                accent: "#161616"
             }
         }
     }
@@ -17,10 +16,64 @@ const WORDS = [
     "Notebook", "Pencil", "Eraser", "Stapler", "Binder", "Marker",
     "Compass", "Ruler", "Scissors", "Highlighter", "Folder", "Clipboard"
 ];
+const API = "https://logs-psvq.onrender.com/api";
+const path = window.location.pathname;
 const searchBar = document.getElementById("search");
+const session = getSession();
+let identity = session.id;
+let username = session.username;
+let isLeaving = false;
 let cached = null;
 let favorites = getFavorites();
 let allLessons = [];
+let page;
+
+async function refreshOnline() {
+    try {
+        const res = await fetch(`${API}/online`);
+        const data = await res.json();
+
+        const pill = document.querySelector(".status-pill");
+
+        if (pill) pill.childNodes[2].textContent = ` ${data.count} online`;
+
+    } catch {}
+}
+
+async function sendPing() {
+    const tabbed = document.visibilityState !== "visible";
+    const onGame = page !== "home page";
+
+    let status;
+    if (!tabbed && !onGame) status = "offline";
+    else if (!tabbed) status = "out";
+    else if (onGame) status = "playing";
+    else status = "home";
+
+    fetch(`${API}/ping`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            identity,
+            username,
+            status,
+            on: page
+        })
+    }).catch(() => {});
+}
+
+function sendLog(message, keepalive = false) {
+    fetch(`${API}/log`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            identity,
+            username,
+            message
+        }),
+        keepalive
+    }).catch(() => {});
+}
 
 function injectNavbar(html) {
     const el = document.getElementById("navbar");
@@ -35,7 +88,7 @@ function getSession() {
         const epoch = Date.now();
 
         session = {
-            name: `${word}-${epoch}`,
+            username: `${word}-${epoch}`,
             id: `${word}-${epoch}`
         };
 
@@ -183,6 +236,22 @@ fetch("/lessons.json")
             .slice()
             .sort((a, b) => a.name.localeCompare(b.name));
 
+        if (path === "/" || path === "/index.html") {
+            page = "home page";
+        } else {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get("id");
+
+            if (id) {
+                const lesson = allLessons.find(l => l.id.toString() === id.toString());
+                page = lesson ? `${lesson.name} (#${id})` : `Lesson #${id}`;
+            } else {
+                page = `unknown page: ${path}`;
+            }
+        }
+
+        sendLog(`accessed ${page}`);
+
         renderLessons();
     });
 
@@ -201,3 +270,27 @@ if (searchBar) {
         renderLessons(filtered);
     });
 }
+
+window.addEventListener("beforeunload", () => {
+    isLeaving = true;
+});
+
+window.addEventListener("pagehide", () => {
+    isLeaving = true;
+    sendLog(`left ${page}`, true);
+});
+
+document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
+        if (!isLeaving) sendLog(`tabbed away from ${page}`);
+    } else {
+        isLeaving = false;
+        sendLog(`tabbed back into ${page}`);
+    }
+});
+
+sendPing();
+setInterval(sendPing, 60000);
+
+refreshOnline();
+setInterval(refreshOnline, 30000);
