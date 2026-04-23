@@ -425,11 +425,15 @@ if (checkboxes) {
 if (usernameInput) {
     usernameInput.value = session.username;
     usernameInput.addEventListener("input", (e) => {
+        const filter = ["nig", "n1g", "neckh"];
         const newUsername = usernameInput.value.trim();
         if (newUsername === "") {
             return;
-        } else if (newUsername.toLowerCase().includes("nig")) {
-            return usernameInput.value = "OUT";
+        } else if (filter.some(word => 
+            newUsername.toLowerCase().includes(word.toLowerCase())
+        )) {
+            usernameInput.value = "FriendlyStudent" + (Math.floor(Math.random() * (99999 - 11111 + 1)) + 11111);
+            return;
         }
 
         session.username = usernameInput.value;
