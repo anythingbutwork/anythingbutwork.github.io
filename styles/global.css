@@ -69,6 +69,59 @@ li.dot-li::before {
     margin-bottom: 15px;
 }
 
+.filter {
+  background-color: #222;
+  border-radius: 20px;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  padding: 24px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  background-image: url("/assets/icons/filter.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 1.5em;
+}
+
+.filter-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  background-color: #1a1a1a;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  min-width: 400px;
+  max-width: 600px;
+  max-height: 300px;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  z-index: 99999;
+  padding: 8px;
+  transform-origin: top right;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  scroll-behavior: smooth;
+}
+
+.filter-menu::-webkit-scrollbar {
+  width: 4px;
+}
+
+.filter-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.filter-menu::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 99px;
+}
+
+.filter-menu::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
 .search {
   background-color: #222;
   border-radius: 20px;
@@ -208,10 +261,6 @@ li.dot-li::before {
   background: rgba(255, 255, 255, 0.25);
 }
 
-.online-panel.hidden {
-  display: none;
-}
-
 .online-panel-header {
   font-size: 0.7rem;
   text-transform: uppercase;
@@ -260,4 +309,63 @@ li.dot-li::before {
   opacity: 0.45;
   font-size: 0.7rem;
   margin-left: auto;
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.filter-option span {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+.filter-option:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.filter-option:hover span {
+    color: white;
+}
+
+.checkbox-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-box {
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    background-color: #222;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.checkbox-box svg {
+    width: 1rem;
+    height: 1rem;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.tag-checkbox:checked + .checkbox-box {
+    background-color: dodgerblue;
+    border-color: dodgerblue;
+}
+
+.tag-checkbox:checked + .checkbox-box svg {
+    opacity: 1;
 }

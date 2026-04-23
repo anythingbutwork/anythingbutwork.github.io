@@ -24,6 +24,7 @@ const API = "https://logs-psvq.onrender.com/api";
 const path = window.location.pathname;
 const searchBar = document.getElementById("search");
 const usernameInput = document.getElementById("username");
+const checkboxes = document.querySelectorAll('.tag-checkbox');
 const session = getSession();
 let isLeaving = false;
 let cached = null;
@@ -91,6 +92,43 @@ async function sendPing() {
             on: page
         })
     }).catch(() => {});
+}
+
+function toggleFilterMenu() {
+    const menu = document.getElementById("filter-menu");
+    if (!menu) return;
+
+    const isOpen = menu.style.display === "block";
+
+    if (isOpen) {
+        menu.style.opacity = "0";
+        menu.style.transform = "scale(0.92) translateY(-6px)";
+        setTimeout(() => menu.style.display = "none", 150);
+        return;
+    }
+
+    menu.style.display = "block";
+    menu.style.opacity = "0";
+    menu.style.transform = "transform";
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            menu.style.opacity = "1";
+            menu.style.transform = "scale(1) translateY(0)";
+        });
+    });
+    
+    const close = (e) => {
+        const button = document.getElementById("filter");
+        if (button && button.contains(e.target)) return;
+        if (menu.contains(e.target)) return;
+        menu.style.opacity = "0";
+        menu.style.transform = "scale(0.92) translateY(-6px)";
+        setTimeout(() => menu.style.display = "none", 150);
+        document.removeEventListener("mousedown", close);
+    };
+
+    setTimeout(() => document.addEventListener("mousedown", close), 150);
 }
 
 function toggleOnlinePanel() {
@@ -197,9 +235,12 @@ function toggleFavorite(e, id) {
 
     const isFav = favs.includes(id);
 
-    const searchTerm = searchBar.value.toLowerCase().trim();
+    const searchTerm = searchBar.value.toLowerCase().trim();   
+    const activeTags = Array.from(document.querySelectorAll('.tag-checkbox:checked')).map(cb => cb.value.toLowerCase());
     const filtered = allLessons.filter(game => {
-        return game.id.toString().includes(searchTerm) || game.name.toLowerCase().includes(searchTerm);
+        const matchesTags = activeTags.every(tag => game.tags.includes(tag));
+        const matchesSearch = game.name.toLowerCase().includes(searchTerm);
+        return matchesTags && matchesSearch;
     });
 
     renderLessons(filtered);
@@ -341,12 +382,31 @@ if (searchBar) {
             return;
         }
 
+        const activeTags = Array.from(document.querySelectorAll('.tag-checkbox:checked')).map(cb => cb.value.toLowerCase());
         const filtered = allLessons.filter(game => {
-            return game.id.toString().includes(searchTerm) || game.name.toLowerCase().includes(searchTerm);
+            const matchesTags = activeTags.every(tag => game.tags.includes(tag));
+            const matchesSearch = game.name.toLowerCase().includes(searchTerm);
+            return matchesTags && matchesSearch;
         });
 
         renderLessons(filtered);
     });
+}
+
+if (checkboxes) {
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener("change", (e) => {   
+            const searchTerm = searchBar.value.toLowerCase().trim();   
+            const activeTags = Array.from(document.querySelectorAll('.tag-checkbox:checked')).map(cb => cb.value.toLowerCase());
+            const filtered = allLessons.filter(game => {
+                const matchesTags = activeTags.every(tag => game.tags.includes(tag));
+                const matchesSearch = game.name.toLowerCase().includes(searchTerm);
+                return matchesTags && matchesSearch;
+            });
+
+            renderLessons(filtered);
+        })
+    })
 }
 
 if (usernameInput) {

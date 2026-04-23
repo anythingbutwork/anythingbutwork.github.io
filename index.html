@@ -18,10 +18,11 @@
 
   <main class="pt-20 px-4 max-w-7xl mx-auto">
     <div class="card">
-        <h1 class="text-xs opacity-75">v2.1.0 — 4/23/2026 8:28AM</h1>
+        <h1 class="text-xs opacity-75">v2.2.0 — 4/23/2026 9:21AM</h1>
         <hr class="divider">
         <h1 class="leading-none text-2xl font-semibold mb-2">Changelog</h1>
         <ul>
+            <li>Added the ability to search with filters for tags such as Driving, Sports, etc.</li>
             <li>Added online playerlist</li>
             <ul class="ml-[20px]">
               <li>You can change your username via Settings (top-right corner)</li>
@@ -44,11 +45,148 @@
         <h1 class="leading-none text-2xl font-semibold mb-2">Planned Features</h1>
         <ul>
             <li>Ability to change theme</li>
-            <li>Search filters with tags such as Driving, Sports, etc.</li>
         </ul>
     </div>
 
-    <input class="search" type="text" id="search" placeholder="Search games..." autocomplete="off">
+    <div class="flex gap-3 items-center relative">
+      <input class="search" type="text" id="search" placeholder="Search games..." autocomplete="off">
+      
+      <div class="relative">
+          <button id="filter" class="filter" onclick="toggleFilterMenu()"></button>
+
+          <div id="filter-menu" class="filter-menu hidden">
+            <div class="text-xs uppercase tracking-widest px-2 py-2 font-semibold text-white/50">Filters</div>
+            <div class="flex flex-col gap-1">
+                <label class="filter-option">
+                    <span>Driving</span>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" value="driving" class="peer hidden tag-checkbox">
+                        <div class="checkbox-box">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+                <label class="filter-option">
+                    <span>Sports</span>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" value="sports" class="peer hidden tag-checkbox">
+                        <div class="checkbox-box">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+                <label class="filter-option">
+                    <span>Multiplayer</span>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" value="multiplayer" class="peer hidden tag-checkbox">
+                        <div class="checkbox-box">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+                <label class="filter-option">
+                    <span>Skill</span>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" value="skill" class="peer hidden tag-checkbox">
+                        <div class="checkbox-box">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+                <label class="filter-option">
+                    <span>Strategy</span>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" value="strategy" class="peer hidden tag-checkbox">
+                        <div class="checkbox-box">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+                <label class="filter-option">
+                    <span>Adventure</span>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" value="adventure" class="peer hidden tag-checkbox">
+                        <div class="checkbox-box">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+                <label class="filter-option">
+                    <span>3D</span>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" value="3d" class="peer hidden tag-checkbox">
+                        <div class="checkbox-box">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+                <label class="filter-option">
+                    <span>Puzzle</span>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" value="puzzle" class="peer hidden tag-checkbox">
+                        <div class="checkbox-box">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+                <label class="filter-option">
+                    <span>Animal</span>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" value="animal" class="peer hidden tag-checkbox">
+                        <div class="checkbox-box">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+                <label class="filter-option">
+                    <span>Action</span>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" value="action" class="peer hidden tag-checkbox">
+                        <div class="checkbox-box">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+                <label class="filter-option">
+                    <span>Idle</span>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" value="idle" class="peer hidden tag-checkbox">
+                        <div class="checkbox-box">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+                <label class="filter-option">
+                    <span>Casual</span>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" value="casual" class="peer hidden tag-checkbox">
+                        <div class="checkbox-box">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+                <label class="filter-option">
+                    <span>Platformer</span>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" value="platformer" class="peer hidden tag-checkbox">
+                        <div class="checkbox-box">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+                <label class="filter-option">
+                    <span>Shooter</span>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" value="shooter" class="peer hidden tag-checkbox">
+                        <div class="checkbox-box">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </label>
+            </div>
+        </div>
+      </div>
+  </div>
 
     <div id="games" class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 mt-5"></div>
   </main>
