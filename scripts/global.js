@@ -54,7 +54,7 @@ async function refreshOnline() {
                     }[u.status] ?? '#AAAAAA';
 
                     return `
-                        <a href="${u.on === "home page" ? "/" : "/lesson/?id=" + u.on.match(/#(\d+)/)[1]}" class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm ${u.player.id === session.id ? "bg-success/25 hover:bg-success/50" : "hover:bg-white/5"}">
+                        <a href="${u.on === "home page" ? "/" : "/lesson/?id=" + u.on.match(/#(\d+)/)[1]}" class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm transition-all duration-100 ease-in-out ${u.player.id === session.id ? "bg-success/25 hover:bg-success/50" : "hover:bg-white/5"}">
                             <span class="w-1.5 h-1.5 rounded-full bg-[${dotColor}] shrink-0"></span>
                             <span>${u.player.name || u.player.id}</span> ${u.player.id === session.id ? " <span class=\"opacity-50 text-xs\">(you)</span>" : ""}
                             ${u.on ? `<span class="ml-auto text-xs opacity-40 pl-4">${u.on}</span>` : ""}
