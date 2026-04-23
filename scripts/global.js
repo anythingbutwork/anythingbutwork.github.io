@@ -25,6 +25,7 @@ const path = window.location.pathname;
 const searchBar = document.getElementById("search");
 const usernameInput = document.getElementById("username");
 const checkboxes = document.querySelectorAll('.tag-checkbox');
+document.documentElement.style.setProperty('--show-id', '0');
 const session = getSession();
 let isLeaving = false;
 let cached = null;
@@ -41,11 +42,14 @@ async function refreshOnline() {
         const pill = document.querySelector(".status-pill");
         const countEl = document.getElementById("online-count");
         const listEl = document.getElementById("online-list");
+        const headerEl = document.getElementById("online-header");
 
-        if (countEl) countEl.textContent = ` ${data.count} online`;
-        else if (pill) pill.childNodes[2].textContent = ` ${data.count} online`;
+        if (countEl) countEl.textContent = ` ${data.count} players online`;
+        else if (pill) pill.childNodes[2].textContent = ` ${data.count} players online`;
 
         if (listEl) {
+            headerEl.textContent = `Online Players ${data.online ? "(" + data.online.length + ")": ""}`;
+
             if (!data.online || data.online.length === 0) {
                 listEl.innerHTML = `<li class="opacity-40 italic text-sm px-2 py-1">Nobody is online...</li>`;
             } else {
@@ -63,13 +67,33 @@ async function refreshOnline() {
                         }[u.status] ?? '#AAAAAA';
 
                         return `
-                            <a href="${u.on === "home page" || u.on === "editing settings" ? "/" : "/lesson/?id=" + u.on.match(/#(\d+)/)[1]}" class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm transition-all duration-100 ease-in-out ${u.player.id === session.id ? "bg-success/25 hover:bg-success/50" : "hover:bg-white/5"}">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[${dotColor}] shrink-0"></span>
-                                <span>${u.player.username || u.player.id}</span> ${u.player.id === session.id ? " <span class=\"opacity-50 text-xs\">(you)</span>" : ""}
-                                ${u.on ? `<span class="ml-auto text-xs opacity-40 pl-4">${u.status === "out" || u.status === "offline" ? "away, " : ""} ${u.on}</span>` : ""}
+                            <a href="${u.on === "home page" || u.on === "editing settings" ? "/" : "/lesson/?id=" + (u.on.match(/#(\d+)/)?.[1] || "")}" 
+                            class="group flex items-center gap-2 px-2 py-2 rounded-lg text-sm transition-all duration-150 ease-in-out ${u.player.id === session.id ? `bg-[${dotColor}]/25 hover:bg-[${dotColor}]/50` : "hover:bg-white/5"}">
+                            
+                            <span class="w-1.5 h-1.5 rounded-full bg-[${dotColor}] shrink-0"></span>
+                            
+                            <div class="flex flex-col justify-center">
+                                <span class="leading-none">
+                                    ${u.player.username || u.player.id} 
+                                    ${u.player.id === session.id ? '<span class="opacity-50 text-xs">(you)</span>' : ''}
+                                </span>
+                                
+                                <div class="overflow-hidden transition-all duration-200 ease-in-out max-h-0 opacity-0
+                                            group-hover:[max-height:calc(var(--show-id)*20px)] 
+                                            group-hover:[opacity:calc(var(--show-id)*0.5)]
+                                            group-hover:[margin-top:calc(var(--show-id)*4px)]">
+                                <span class="text-[10px] block">
+                                    ${u.player.id}
+                                </span>
+                                </div>
+                            </div>
+
+                            ${u.on ? `<span class="ml-auto text-xs opacity-40 pl-4">${u.status === "out" || u.status === "offline" ? "away, " : ""} ${u.on}</span>` : ""}
                             </a>
-                        `
-                    }).join("");
+                        `;
+                        }).join("");
+
+
             }
         }
     } catch {}
@@ -448,6 +472,18 @@ window.addEventListener("beforeunload", () => {
 window.addEventListener("pagehide", () => {
     isLeaving = true;
     sendLog(`left ${page}`, true);
+});
+
+window.addEventListener('keydown', (e) => {
+  if (e.key.toLowerCase() === 'f') {
+    document.documentElement.style.setProperty('--show-id', '1');
+  }
+});
+
+window.addEventListener('keyup', (e) => {
+  if (e.key.toLowerCase() === 'f') {
+    document.documentElement.style.setProperty('--show-id', '0');
+  }
 });
 
 document.addEventListener("visibilitychange", () => {
