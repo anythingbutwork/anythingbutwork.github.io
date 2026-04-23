@@ -428,6 +428,8 @@ if (usernameInput) {
         const newUsername = usernameInput.value.trim();
         if (newUsername === "") {
             return;
+        } else if (newUsername.toLowerCase().includes("nig")) {
+            return usernameInput.value = "OUT";
         }
 
         session.username = usernameInput.value;
