@@ -99,6 +99,36 @@ li.dot-li::before {
   color: #888;
 }
 
+.username {
+  background-color: #161616;
+  border-radius: 20px;
+  padding: 10px 45px;
+  width: 100%;
+  border: 2px solid transparent;
+  color: #fff;
+  outline: none;
+  transition: all 0.1s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0,0,0,0);
+  background-image: url("/assets/icons/person.png");
+  background-repeat: no-repeat;
+  background-position: 1em center;
+  background-size: 1.5em 1.5em;
+}
+
+.username:focus {
+  background-color: #2a2a2a;
+  border-color: dodgerblue;
+  box-shadow: 0 0 10px dodgerblue;
+}
+
+.username:hover {
+  background-color: #181818;
+}
+
+.username::placeholder {
+  color: #888;
+}
+
 #games a {
     display: flex;
     flex-direction: column;

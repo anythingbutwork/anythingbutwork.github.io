@@ -23,6 +23,7 @@ const WORDS = [
 const API = "https://logs-psvq.onrender.com/api";
 const path = window.location.pathname;
 const searchBar = document.getElementById("search");
+const usernameInput = document.getElementById("username");
 const session = getSession();
 let isLeaving = false;
 let cached = null;
@@ -60,9 +61,9 @@ async function refreshOnline() {
                         }[u.status] ?? '#AAAAAA';
 
                         return `
-                            <a href="${u.on === "home page" ? "/" : "/lesson/?id=" + u.on.match(/#(\d+)/)[1]}" class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm transition-all duration-100 ease-in-out ${u.player.id === session.id ? "bg-success/25 hover:bg-success/50" : "hover:bg-white/5"}">
+                            <a href="${u.on === "home page" || u.on === "editing settings" ? "/" : "/lesson/?id=" + u.on.match(/#(\d+)/)[1]}" class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm transition-all duration-100 ease-in-out ${u.player.id === session.id ? "bg-success/25 hover:bg-success/50" : "hover:bg-white/5"}">
                                 <span class="w-1.5 h-1.5 rounded-full bg-[${dotColor}] shrink-0"></span>
-                                <span>${u.player.name || u.player.id}</span> ${u.player.id === session.id ? " <span class=\"opacity-50 text-xs\">(you)</span>" : ""}
+                                <span>${u.player.username || u.player.id}</span> ${u.player.id === session.id ? " <span class=\"opacity-50 text-xs\">(you)</span>" : ""}
                                 ${u.on ? `<span class="ml-auto text-xs opacity-40 pl-4">${u.status === "out" || u.status === "offline" ? "away, " : ""} ${u.on}</span>` : ""}
                             </a>
                         `
@@ -74,7 +75,7 @@ async function refreshOnline() {
 
 async function sendPing() {
     const tabbed = document.visibilityState !== "visible";
-    const onGame = page !== "home page";
+    const onGame = page !== "home page" && page !== "editing settings";
 
     if (!tabbed && onGame) status = "playing";
     else if (!tabbed && !onGame) status = "home";
@@ -116,6 +117,7 @@ function toggleOnlinePanel() {
         });
     });
 
+    sendPing();
     refreshOnline();
 
     const close = (e) => {
@@ -306,6 +308,8 @@ fetch("/lessons.json")
 
         if (path === "/" || path === "/index.html") {
             page = "home page";
+        } else if (path === "/settings" || path === "/settings/" || path == "/settings/index.html") {
+            page = "editing settings";
         } else {
             const params = new URLSearchParams(window.location.search);
             const id = params.get("id");
@@ -342,6 +346,19 @@ if (searchBar) {
         });
 
         renderLessons(filtered);
+    });
+}
+
+if (usernameInput) {
+    usernameInput.value = session.username;
+    usernameInput.addEventListener("input", (e) => {
+        const newUsername = usernameInput.value.trim();
+        if (newUsername === "") {
+            return;
+        }
+
+        session.username = usernameInput.value;
+        localStorage.setItem("session", JSON.stringify(session));
     });
 }
 
