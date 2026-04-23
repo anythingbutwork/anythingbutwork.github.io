@@ -78,13 +78,10 @@ async function refreshOnline() {
                                     ${u.player.id === session.id ? '<span class="opacity-50 text-xs">(you)</span>' : ''}
                                 </span>
                                 
-                                <div class="overflow-hidden transition-all duration-200 ease-in-out max-h-0 opacity-0
-                                            group-hover:[max-height:calc(var(--show-id)*20px)] 
-                                            group-hover:[opacity:calc(var(--show-id)*0.5)]
-                                            group-hover:[margin-top:calc(var(--show-id)*4px)]">
-                                <span class="text-[10px] block">
-                                    ${u.player.id}
-                                </span>
+                                <div class="overflow-hidden transition-all duration-200 ease-in-out max-h-0 opacity-0 group-hover:[max-height:calc(var(--show-id)*20px)] group-hover:[opacity:calc(var(--show-id)*0.5)] group-hover:[margin-top:calc(var(--show-id)*4px)]">
+                                    <span class="text-[10px] block mt-0">
+                                        ${u.player.id}
+                                    </span>
                                 </div>
                             </div>
 
