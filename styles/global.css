@@ -1,0 +1,130 @@
+html {
+    scrollbar-gutter: stable;
+    font-family: "Inter", system-ui, sans-serif;
+}
+
+hr {
+    border: none;
+    border-top: 2px solid white;
+    border-radius: 100px;
+    opacity: 25%;
+    margin: 5px 0;
+}
+
+ul {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+li {
+    position: relative;
+    padding-left: 2em;
+}
+
+li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.5em;
+    height: 1.5em;
+    background-image: url("/assets/icons/right.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.nav-link {
+    color: white;
+    transition: all 0.15s ease-in-out;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 50px;
+}
+
+.nav-link:hover {
+    background-color: dodgerblue;
+}
+
+.card {
+    background-color: dodgerblue;
+    border-color: white;
+    padding: 25px;
+    border-radius: 20px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.search {
+  background-color: #222;
+  border-radius: 20px;
+  padding: 10px 40px;
+  width: 100%;
+  border: 2px solid transparent;
+  color: #fff;
+  outline: none;
+  transition: all 0.1s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  background-image: url("/assets/icons/search.png");
+  background-repeat: no-repeat;
+  background-position: 1em center;
+  background-size: 1em 1em;
+}
+
+.search:focus {
+  background-color: #2a2a2a;
+  border-color: dodgerblue;
+  box-shadow: 0 0 10px dodgerblue;
+}
+
+.search:hover {
+  background-color: #242424;
+}
+
+.search::placeholder {
+  color: #888;
+}
+
+#games a {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.game-icon {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 16px;
+    transition: all 0.15s ease, filter 0.15s ease;
+}
+
+.game-icon:hover {
+    transform: scale(1.1);
+}
+
+.status-dot {
+    background-color: #66FF66;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50px;
+}
+
+.status-pill {
+    color: #66FF66;
+    background-color: #66ff662b;
+    border-width: 1px;
+    border-color: #66FF66;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 50px;
+    transition: all 0.15s ease, filter 0.15s ease;
+}
+
+.status-pill:hover {
+    background-color: #66ff663c;
+}
