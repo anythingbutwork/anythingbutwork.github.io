@@ -23,8 +23,6 @@ const API = "https://logs-psvq.onrender.com/api";
 const path = window.location.pathname;
 const searchBar = document.getElementById("search");
 const session = getSession();
-let identity = session.id;
-let username = session.username;
 let isLeaving = false;
 let cached = null;
 let favorites = getFavorites();
@@ -56,7 +54,7 @@ async function refreshOnline() {
                     }[u.status] ?? '#AAAAAA';
 
                     return `
-                        <a href="${u.on === "home page" ? "/" : "/lesson/?id=" + u.on.match(/#(\d+)/)[1]}" class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm ${u.identity === identity ? "bg-success/25 hover:bg-success/50" : "hover:bg-white/5"}">
+                        <a href="${u.on === "home page" ? "/" : "/lesson/?id=" + u.on.match(/#(\d+)/)[1]}" class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm ${u.player.id === session.id ? "bg-success/25 hover:bg-success/50" : "hover:bg-white/5"}">
                             <span class="w-1.5 h-1.5 rounded-full bg-[${dotColor}] shrink-0"></span>
                             <span>${u.username || u.identity}</span>
                             ${u.on ? `<span class="ml-auto text-xs opacity-40 pl-4">${u.on}</span>` : ""}
@@ -81,8 +79,7 @@ async function sendPing() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            identity,
-            username,
+            player: session,
             status,
             on: page
         })
@@ -133,8 +130,7 @@ function sendLog(message, keepalive = false) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            identity,
-            username,
+            player: session,
             message
         }),
         keepalive
