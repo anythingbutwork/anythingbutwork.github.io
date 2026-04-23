@@ -6,7 +6,10 @@ tailwind.config = {
             },
             colors: {
                 bg: "#111111",
-                accent: "#161616"
+                accent: "#161616",
+                success: "#66FF66",
+                fail: "#FF6666",
+                blue: "#1E90FF"
             }
         }
     }
@@ -34,9 +37,33 @@ async function refreshOnline() {
         const data = await res.json();
 
         const pill = document.querySelector(".status-pill");
+        const countEl = document.getElementById("online-count");
+        const listEl = document.getElementById("online-list");
 
-        if (pill) pill.childNodes[2].textContent = ` ${data.count} online`;
+        if (countEl) countEl.textContent = ` ${data.count} online`;
+        else if (pill) pill.childNodes[2].textContent = ` ${data.count} online`;
 
+        if (listEl) {
+            if (!data.online || data.online.length === 0) {
+                listEl.innerHTML = `<li class="opacity-40 italic text-sm px-2 py-1">Nobody is online...</li>`;
+            } else {
+                listEl.innerHTML = data.online.map((u) => {
+                    const dotColor = {
+                        playing: '#66FF66',
+                        out: '#F0B232',
+                        home: '#1E90FF',
+                        offline: '#FF6666',
+                    }[u.status] ?? '#AAAAAA';
+                    return `
+                        <li class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm ${u.identity === identity ? "bg-success/25 hover:bg-success/50" : "hover:bg-white/5"}">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[${dotColor}] shrink-0"></span>
+                            <span>${u.username || u.identity}</span>
+                            ${u.on ? `<span class="ml-auto text-xs opacity-40 pl-4">${u.on}</span>` : ""}
+                        </li>
+                    `
+                }).join("");
+            }
+        }
     } catch {}
 }
 
@@ -44,11 +71,10 @@ async function sendPing() {
     const tabbed = document.visibilityState !== "visible";
     const onGame = page !== "home page";
 
-    let status;
-    if (!tabbed && !onGame) status = "offline";
-    else if (!tabbed) status = "out";
-    else if (onGame) status = "playing";
-    else status = "home";
+    if (!tabbed && onGame) status = "playing";
+    else if (!tabbed && !onGame) status = "home";
+    else if (tabbed && onGame) status = "out";
+    else status = "offline";
 
     fetch(`${API}/ping`, {
         method: "POST",
@@ -60,6 +86,45 @@ async function sendPing() {
             on: page
         })
     }).catch(() => {});
+}
+
+function toggleOnlinePanel() {
+    const panel = document.getElementById("online-panel");
+    if (!panel) return;
+
+    const isOpen = panel.style.display === "block";
+
+    if (isOpen) {
+        panel.style.opacity = "0";
+        panel.style.transform = "scale(0.92) translateY(-6px)";
+        setTimeout(() => panel.style.display = "none", 150);
+        return;
+    }
+
+    panel.style.display = "block";
+    panel.style.opacity = "0";
+    panel.style.transform = "scale(0.92) translateY(-6px)";
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            panel.style.opacity = "1";
+            panel.style.transform = "scale(1) translateY(0)";
+        });
+    });
+
+    refreshOnline();
+
+    const close = (e) => {
+        const pill = document.getElementById("online-pill");
+        if (pill && pill.contains(e.target)) return;
+        if (panel.contains(e.target)) return;
+        panel.style.opacity = "0";
+        panel.style.transform = "scale(0.92) translateY(-6px)";
+        setTimeout(() => panel.style.display = "none", 150);
+        document.removeEventListener("mousedown", close);
+    };
+
+    setTimeout(() => document.addEventListener("mousedown", close), 150);
 }
 
 function sendLog(message, keepalive = false) {
@@ -252,6 +317,12 @@ fetch("/lessons.json")
 
         sendLog(`accessed ${page}`);
 
+        sendPing();
+        setInterval(sendPing, 60000);
+
+        refreshOnline();
+        setInterval(refreshOnline, 30000);
+
         renderLessons();
     });
 
@@ -288,9 +359,3 @@ document.addEventListener("visibilitychange", () => {
         sendLog(`tabbed back into ${page}`);
     }
 });
-
-sendPing();
-setInterval(sendPing, 60000);
-
-refreshOnline();
-setInterval(refreshOnline, 30000);

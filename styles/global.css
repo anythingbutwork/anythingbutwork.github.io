@@ -128,3 +128,73 @@ li::before {
 .status-pill:hover {
     background-color: #66ff663c;
 }
+
+.online-panel {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  background-color: #1a1a1a;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  min-width: 400px;
+  max-width: 600px;
+  max-height: 300px;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  z-index: 99999;
+  padding: 8px;
+  transform-origin: top right;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.online-panel.hidden {
+  display: none;
+}
+
+.online-panel-header {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.45;
+  padding: 4px 8px 8px;
+}
+
+.online-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.online-list li {
+  padding: 7px 10px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: static;
+  padding-left: 10px;
+  transition: all 0.1s ease-in-out;
+}
+
+.online-list li::before {
+  display: none;
+}
+
+.online-user-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #66FF66;
+  flex-shrink: 0;
+}
+
+.online-user-page {
+  opacity: 0.45;
+  font-size: 0.7rem;
+  margin-left: auto;
+}
