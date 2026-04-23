@@ -28,6 +28,16 @@ li::before {
     background-position: center;
 }
 
+li.dot-li::before {
+    background-image: none;
+    background-color: var(--dot-color, white);
+    border-width: 0.5px;
+    border-color: #fff;
+    border-radius: 50%;
+    width: 0.5rem;
+    height: 0.5rem;
+}
+
 .divider {
     border: none;
     border-top: 2px solid white;
