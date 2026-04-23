@@ -30,6 +30,7 @@ let isLeaving = false;
 let cached = null;
 let favorites = getFavorites();
 let allLessons = [];
+let version;
 let page;
 
 async function refreshOnline() {
@@ -92,6 +93,18 @@ async function sendPing() {
             on: page
         })
     }).catch(() => {});
+}
+
+function checkForUpdates() {
+    fetch(`/version.txt`)
+        .then(response => response.text())
+        .then((response) => {
+            if (version && version !== response) {
+                window.location.reload();
+            } else {
+                version = response;
+            }
+        })
 }
 
 function toggleFilterMenu() {
@@ -366,10 +379,10 @@ fetch("/lessons.json")
         sendLog(`accessed ${page}`);
 
         sendPing();
-        setInterval(sendPing, 60000);
+        setInterval(sendPing, 15000);
 
         refreshOnline();
-        setInterval(refreshOnline, 30000);
+        setInterval(refreshOnline, 15000);
 
         renderLessons();
     });
@@ -439,3 +452,6 @@ document.addEventListener("visibilitychange", () => {
         sendLog(`tabbed back into ${page}`);
     }
 });
+
+checkForUpdates();
+setInterval(checkForUpdates, 15000);
