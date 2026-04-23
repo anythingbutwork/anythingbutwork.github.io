@@ -158,6 +158,24 @@ li.dot-li::before {
   padding: 8px;
   transform-origin: top right;
   transition: transform 0.15s ease, opacity 0.15s ease;
+  scroll-behavior: smooth;
+}
+
+.online-panel::-webkit-scrollbar {
+  width: 4px;
+}
+
+.online-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.online-panel::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 99px;
+}
+
+.online-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .online-panel.hidden {
@@ -179,6 +197,10 @@ li.dot-li::before {
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+.online-list a {
+  white-space: nowrap;
 }
 
 .online-list li {

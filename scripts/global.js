@@ -7,6 +7,7 @@ tailwind.config = {
             colors: {
                 bg: "#111111",
                 accent: "#161616",
+                light: "#222222",
                 success: "#66FF66",
                 fail: "#FF6666",
                 blue: "#1E90FF"
@@ -45,22 +46,27 @@ async function refreshOnline() {
             if (!data.online || data.online.length === 0) {
                 listEl.innerHTML = `<li class="opacity-40 italic text-sm px-2 py-1">Nobody is online...</li>`;
             } else {
-                listEl.innerHTML = data.online.map((u) => {
-                    const dotColor = {
-                        playing: '#66FF66',
-                        out: '#F0B232',
-                        home: '#1E90FF',
-                        offline: '#FF6666',
-                    }[u.status] ?? '#AAAAAA';
+                const statusOrder = { playing: 0, home: 1, out: 2, offline: 3 };
 
-                    return `
-                        <a href="${u.on === "home page" ? "/" : "/lesson/?id=" + u.on.match(/#(\d+)/)[1]}" class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm transition-all duration-100 ease-in-out ${u.player.id === session.id ? "bg-success/25 hover:bg-success/50" : "hover:bg-white/5"}">
-                            <span class="w-1.5 h-1.5 rounded-full bg-[${dotColor}] shrink-0"></span>
-                            <span>${u.player.name || u.player.id}</span> ${u.player.id === session.id ? " <span class=\"opacity-50 text-xs\">(you)</span>" : ""}
-                            ${u.on ? `<span class="ml-auto text-xs opacity-40 pl-4">${u.on}</span>` : ""}
-                        </a>
-                    `
-                }).join("");
+                listEl.innerHTML = data.online
+                    .slice()
+                    .sort((a, b) => (statusOrder[a.status] ?? 99) - (statusOrder[b.status] ?? 99))
+                    .map((u) => {
+                        const dotColor = {
+                            playing: '#66FF66',
+                            out: '#F0B232',
+                            home: '#1E90FF',
+                            offline: '#FF6666',
+                        }[u.status] ?? '#AAAAAA';
+
+                        return `
+                            <a href="${u.on === "home page" ? "/" : "/lesson/?id=" + u.on.match(/#(\d+)/)[1]}" class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm transition-all duration-100 ease-in-out ${u.player.id === session.id ? "bg-success/25 hover:bg-success/50" : "hover:bg-white/5"}">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[${dotColor}] shrink-0"></span>
+                                <span>${u.player.name || u.player.id}</span> ${u.player.id === session.id ? " <span class=\"opacity-50 text-xs\">(you)</span>" : ""}
+                                ${u.on ? `<span class="ml-auto text-xs opacity-40 pl-4">${u.status === "out" || u.status === "offline" ? "away, " : ""} ${u.on}</span>` : ""}
+                            </a>
+                        `
+                    }).join("");
             }
         }
     } catch {}
