@@ -5569,6 +5569,16 @@
                 "driving",
                 "skill"
             ]
+        },
+        {
+            "id": 2310,
+            "name": "Brotato",
+            "path": "/extras/Brotato",
+            "tags": [
+                "action",
+                "strategy",
+                "skill"
+            ]
         }
     ]
 }
