@@ -129,18 +129,23 @@ function checkForUpdates() {
 }
 
 function toggleFilterMenu() {
+    const button = document.getElementById("filter");
     const menu = document.getElementById("filter-menu");
     if (!menu) return;
 
     const isOpen = menu.style.display === "block";
 
     if (isOpen) {
+        button.style.borderColor = "";
+        button.style.boxShadow = "";
         menu.style.opacity = "0";
         menu.style.transform = "scale(0.92) translateY(-6px)";
         setTimeout(() => menu.style.display = "none", 150);
         return;
     }
 
+    button.style.borderColor = "dodgerblue";
+    button.style.boxShadow = "0 0 10px dodgerblue";
     menu.style.display = "block";
     menu.style.opacity = "0";
     menu.style.transform = "transform";
@@ -153,9 +158,10 @@ function toggleFilterMenu() {
     });
     
     const close = (e) => {
-        const button = document.getElementById("filter");
         if (button && button.contains(e.target)) return;
         if (menu.contains(e.target)) return;
+        button.style.borderColor = "";
+        button.style.boxShadow = "";
         menu.style.opacity = "0";
         menu.style.transform = "scale(0.92) translateY(-6px)";
         setTimeout(() => menu.style.display = "none", 150);
