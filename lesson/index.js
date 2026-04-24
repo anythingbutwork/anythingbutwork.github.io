@@ -3,6 +3,8 @@ const lessonId = Number(params.get("id"));
 
 const frame = document.getElementById("lessonFrame");
 const name = document.getElementById("lessonName");
+const warning = document.getElementById("lessonWarning");
+const warningText = document.getElementById("lessonWarningText");
 const fullscreen = document.getElementById("fullscreen");
 
 fetch("/lessons.json")
@@ -22,6 +24,11 @@ fetch("/lessons.json")
 
         frame.src = (lesson.path && lesson.path + "/game.html") || `https://lesson126.github.io/lesson${lessonGroup}/lesson-${lessonId}`;
         name.textContent = lesson.name;
+        
+        if (lesson.warning) {
+            warningText.innerHTML = lesson.warning;
+            warning.classList.remove("hidden");
+        }
     });
 
 fullscreen.addEventListener("click", () => {
