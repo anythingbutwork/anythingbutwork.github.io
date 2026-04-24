@@ -5548,6 +5548,7 @@
             "name": "Balatro GBA",
             "lesson": null,
             "image": "/assets/games/balatro.png",
+            "file": "/extras/balatro.html",
             "tags": [
                 "strategy",
                 "casual"

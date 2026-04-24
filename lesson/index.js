@@ -9,7 +9,6 @@ fetch("/lessons.json")
     .then(res => res.json())
     .then(data => {
         const lesson = data.lessons.find(l => l.id === lessonId);
-
         if (!lesson) {
             frame.src = "about:blank";
             console.error("Lesson not found");
@@ -17,11 +16,11 @@ fetch("/lessons.json")
         }
 
         const lessonGroup = lesson.lesson;
-        if (lessonGroup === null) {
+        if (lessonGroup === null && !lesson.file) {
             return;
         }
 
-        frame.src = `https://lesson126.github.io/lesson${lessonGroup}/lesson-${lessonId}`;
+        frame.src = lesson.file || `https://lesson126.github.io/lesson${lessonGroup}/lesson-${lessonId}`;
         name.textContent = lesson.name;
     });
 
