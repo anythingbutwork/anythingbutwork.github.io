@@ -5580,6 +5580,15 @@
                 "strategy",
                 "skill"
             ]
+        },
+        {
+            "id": 2311,
+            "name": "Escape Road 2",
+            "path": "/extras/EscapeRoad2",
+            "tags": [
+                "driving",
+                "skill"
+            ]
         }
     ]
 }
