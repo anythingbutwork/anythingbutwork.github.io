@@ -142,10 +142,11 @@ function renderOnline(data) {
     }
 }
 
-function refreshOnline() {
-    wsSend({ action: "online" });
+function leave() {
+    isLeaving = true;
+    wsSend({ action: "bye", player: session });
+    wsSend({ action: "log", player: session, message: `left ${page}` });
 }
-
 
 function sendPing() {
     const tabbed = document.visibilityState !== "visible";
@@ -160,16 +161,13 @@ function sendPing() {
     wsSend({ action: "ping", player: session, status, on: page });
 }
 
-
 function sendLog(message) {
     wsSend({ action: "log", player: session, message });
 }
 
-
 function sendSuggestion(suggestion) {
     wsSend({ action: "suggest", player: session, suggestion });
 }
-
 
 function checkForUpdates() {
     fetch(`/version.txt`)
@@ -282,7 +280,6 @@ function toggleOnlinePanel() {
     });
 
     sendPing();
-    refreshOnline();
 
     const close = (e) => {
         const pill = document.getElementById("online-pill");
@@ -503,9 +500,6 @@ fetch("/lessons.json")
         sendPing();
         setInterval(sendPing, 15000);
 
-        refreshOnline();
-        setInterval(refreshOnline, 15000);
-
         renderLessons();
     });
 
@@ -557,12 +551,9 @@ if (usernameInput) {
     });
 }
 
-window.addEventListener("beforeunload", () => { isLeaving = true; });
+window.addEventListener("beforeunload", () => leave);
 
-window.addEventListener("pagehide", () => {
-    isLeaving = true;
-    wsSend({ action: "log", player: session, message: `left ${page}` });
-});
+window.addEventListener("pagehide", () => leave);
 
 window.addEventListener('keydown', (e) => {
     if (e.key.toLowerCase() === 'f') document.documentElement.style.setProperty('--show-id', '1');
