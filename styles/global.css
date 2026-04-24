@@ -69,6 +69,21 @@ li.dot-li::before {
     margin-bottom: 15px;
 }
 
+.suggest {
+  background-color: #161616;
+  border-radius: 20px;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  padding: 24px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+  background-image: url("/assets/icons/send.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 1.5em;
+}
+
 .filter {
   background-color: #222;
   border-radius: 20px;
@@ -179,6 +194,36 @@ li.dot-li::before {
 }
 
 .username::placeholder {
+  color: #888;
+}
+
+.suggestion {
+  background-color: #161616;
+  border-radius: 20px;
+  padding: 10px 45px;
+  width: 100%;
+  border: 2px solid transparent;
+  color: #fff;
+  outline: none;
+  transition: all 0.1s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0,0,0,0);
+  background-image: url("/assets/icons/suggestion.png");
+  background-repeat: no-repeat;
+  background-position: 1em center;
+  background-size: 1.5em 1.5em;
+}
+
+.suggestion:focus {
+  background-color: #2a2a2a;
+  border-color: dodgerblue;
+  box-shadow: 0 0 10px dodgerblue;
+}
+
+.suggestion:hover {
+  background-color: #181818;
+}
+
+.suggestion::placeholder {
   color: #888;
 }
 

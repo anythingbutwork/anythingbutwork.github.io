@@ -39,6 +39,7 @@ const usernameInput = document.getElementById("username");
 const checkboxes = document.querySelectorAll('.tag-checkbox');
 document.documentElement.style.setProperty('--show-id', '0');
 const session = getSession();
+let suggestDebounce = false;
 let isLeaving = false;
 let cached = null;
 let favorites = getFavorites();
@@ -264,6 +265,48 @@ function sendLog(message, keepalive = false) {
         }),
         keepalive
     }).catch(() => {});
+}
+
+function sendSuggestion(suggestion) {
+    fetch(`${API}/suggest`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            player: session,
+            suggestion
+        })
+    }).catch(() => {});
+}
+
+function submitSuggestion() {
+    const input = document.getElementById("suggestion");
+    const button = document.getElementById("suggest");
+    if (!input) return;
+    if (suggestDebounce) return;
+    suggestDebounce = true;
+
+    function result(color) {
+        input.style.borderColor = color;
+        input.style.boxShadow = `0 0 10px ${color}`;
+        button.style.borderColor = color;
+        button.style.boxShadow = `0 0 10px ${color}`;
+        return setTimeout(() => {
+            input.style.borderColor = "";
+            input.style.boxShadow = "";
+            button.style.borderColor = "";
+            button.style.boxShadow = "";
+            suggestDebounce = false;
+        }, 2500);
+    }
+
+    const suggestion = input.value.trim();
+    if (suggestion === "") {
+        return result("#FF6666");
+    };
+
+    sendSuggestion(suggestion);
+    input.value = "";
+    return result("#66FF66");
 }
 
 function injectNavbar(html) {

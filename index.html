@@ -18,11 +18,12 @@
 
   <main class="py-20 px-4 max-w-7xl mx-auto">
     <div class="card">
-        <h1 class="text-xs opacity-75">v2.2.3 — 4/24/2026 7:48AM</h1>
+        <h1 class="text-xs opacity-75">v2.3.0 — 4/24/2026 12:25PM</h1>
         <hr class="divider">
         <h1 class="leading-none text-2xl font-semibold mb-2">Changelog</h1>
         <ul>
             <li>Added the ability to search with filters for tags such as Driving, Sports, etc.</li>
+            <li>Added the ability to submit suggestions on the home page</li>
             <li>Added time until period end at top</li>
             <li>Added new games!</li>
             <ul class="ml-[20px]">
@@ -34,6 +35,16 @@
             <li>Fixed Cookie Clicker softlock after purchasing Factories</li>
             <li>Fixed Balatro GBA not loading after v2.0.0</li>
         </ul>
+    </div>
+
+    <div class="card bg-light">
+        <h1 class="text-xs opacity-75">SUGGESTIONS</h1>
+        <hr class="divider">
+        <h1 class="leading-none text-2xl font-semibold mb-2">Submit a Suggestion</h1>
+        <div class="flex gap-3 items-center relative">
+            <input class="suggestion" type="text" id="suggestion" placeholder="What should be added or changed?" autocomplete="off">
+            <button id="suggest" class="suggest" onclick="submitSuggestion()"></button>
+        </div>
     </div>
 
     <div class="flex gap-3 items-center relative">
