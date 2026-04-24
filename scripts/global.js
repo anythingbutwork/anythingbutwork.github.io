@@ -32,7 +32,7 @@ const schedule = [
     { name: "Period 7", start: "13:16", end: "14:05" }
 ];
 
-const API = "https://logs-psvq.onrender.com/api";
+const WS_URL = "wss://logs-psvq.onrender.com";
 const path = window.location.pathname;
 const searchBar = document.getElementById("search");
 const usernameInput = document.getElementById("username");
@@ -47,87 +47,129 @@ let allLessons = [];
 let version;
 let page;
 
-async function refreshOnline() {
-    try {
-        const res = await fetch(`${API}/online`);
-        const data = await res.json();
 
-        const pill = document.querySelector(".status-pill");
-        const countEl = document.getElementById("online-count");
-        const listEl = document.getElementById("online-list");
-        const headerEl = document.getElementById("online-header");
+let ws;
+let wsReady = false;
+const wsQueue = [];
 
-        if (countEl) countEl.textContent = ` ${data.count} players online`;
-        else if (pill) pill.childNodes[2].textContent = ` ${data.count} players online`;
+function wsConnect() {
+    ws = new WebSocket(WS_URL);
 
-        if (listEl) {
-            headerEl.textContent = `Online Players ${data.online ? "(" + data.online.length + ")": ""}`;
+    ws.addEventListener("open", () => {
+        wsReady = true;
+        wsQueue.splice(0).forEach(msg => ws.send(JSON.stringify(msg)));
+    });
 
-            if (!data.online || data.online.length === 0) {
-                listEl.innerHTML = `<li class="opacity-40 italic text-sm px-2 py-1">Nobody is online...</li>`;
-            } else {
-                const statusOrder = { playing: 0, home: 1, out: 2, offline: 3 };
+    ws.addEventListener("message", (event) => {
+        let data;
+        try { data = JSON.parse(event.data); } catch { return; }
 
-                listEl.innerHTML = data.online
-                    .slice()
-                    .sort((a, b) => (statusOrder[a.status] ?? 99) - (statusOrder[b.status] ?? 99))
-                    .map((u) => {
-                        const dotColor = {
-                            playing: '#66FF66',
-                            out: '#E0AA17',
-                            home: '#1E90FF',
-                            offline: '#FF6666',
-                        }[u.status] ?? '#AAAAAA';
-
-                        return `
-                            <a href="${u.on === "home page" || u.on === "editing settings" ? "/" : "/lesson/?id=" + (u.on.match(/#(\d+)/)?.[1] || "")}" 
-                            class="group flex items-center gap-2 px-2 py-2 rounded-lg text-sm transition-all duration-150 ease-in-out ${u.player.id === session.id ? `bg-[${dotColor}]/25 hover:bg-[${dotColor}]/50` : "hover:bg-white/5"}">
-                            
-                            <span class="w-1.5 h-1.5 rounded-full bg-[${dotColor}] shrink-0"></span>
-                            
-                            <div class="flex flex-col justify-center">
-                                <span class="leading-none">
-                                    ${u.player.username || u.player.id} 
-                                    ${u.player.id === session.id ? '<span class="opacity-50 text-xs">(you)</span>' : ''}
-                                </span>
-                                
-                                <div class="overflow-hidden transition-all duration-200 ease-in-out max-h-0 opacity-0 group-hover:[max-height:calc(var(--show-id)*20px)] group-hover:[opacity:calc(var(--show-id)*0.5)] group-hover:[margin-top:calc(var(--show-id)*4px)]">
-                                    <span class="text-[10px] block mt-0">
-                                        ${u.player.id}
-                                    </span>
-                                </div>
-                            </div>
-
-                            ${u.on ? `<span class="ml-auto text-xs opacity-40 pl-4">${u.status === "out" || u.status === "offline" ? "away, " : ""} ${u.on}</span>` : ""}
-                            </a>
-                        `;
-                        }).join("");
-
-
-            }
+        if (data.action === "online") {
+            renderOnline(data);
         }
-    } catch {}
+    });
+
+    ws.addEventListener("close", () => {
+        wsReady = false;
+        setTimeout(wsConnect, 3000);
+    });
+
+    ws.addEventListener("error", () => ws.close());
 }
 
-async function sendPing() {
+function wsSend(msg) {
+    if (wsReady && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(msg));
+    } else {
+        wsQueue.push(msg);
+    }
+}
+
+wsConnect();
+
+function renderOnline(data) {
+    const pill = document.querySelector(".status-pill");
+    const countEl = document.getElementById("online-count");
+    const listEl = document.getElementById("online-list");
+    const headerEl = document.getElementById("online-header");
+
+    if (countEl) countEl.textContent = ` ${data.count} players online`;
+    else if (pill) pill.childNodes[2].textContent = ` ${data.count} players online`;
+
+    if (listEl) {
+        headerEl.textContent = `Online Players ${data.online ? "(" + data.online.length + ")" : ""}`;
+
+        if (!data.online || data.online.length === 0) {
+            listEl.innerHTML = `<li class="opacity-40 italic text-sm px-2 py-1">Nobody is online...</li>`;
+        } else {
+            const statusOrder = { playing: 0, home: 1, out: 2, offline: 3 };
+
+            listEl.innerHTML = data.online
+                .slice()
+                .sort((a, b) => (statusOrder[a.status] ?? 99) - (statusOrder[b.status] ?? 99))
+                .map((u) => {
+                    const dotColor = {
+                        playing: '#66FF66',
+                        out: '#E0AA17',
+                        home: '#1E90FF',
+                        offline: '#FF6666',
+                    }[u.status] ?? '#AAAAAA';
+
+                    return `
+                        <a href="${u.on === "home page" || u.on === "editing settings" ? "/" : "/lesson/?id=" + (u.on.match(/#(\d+)/)?.[1] || "")}" 
+                        class="group flex items-center gap-2 px-2 py-2 rounded-lg text-sm transition-all duration-150 ease-in-out ${u.player.id === session.id ? `bg-[${dotColor}]/25 hover:bg-[${dotColor}]/50` : "hover:bg-white/5"}">
+                        
+                        <span class="w-1.5 h-1.5 rounded-full bg-[${dotColor}] shrink-0"></span>
+                        
+                        <div class="flex flex-col justify-center">
+                            <span class="leading-none">
+                                ${u.player.username || u.player.id} 
+                                ${u.player.id === session.id ? '<span class="opacity-50 text-xs">(you)</span>' : ''}
+                            </span>
+                            
+                            <div class="overflow-hidden transition-all duration-200 ease-in-out max-h-0 opacity-0 group-hover:[max-height:calc(var(--show-id)*20px)] group-hover:[opacity:calc(var(--show-id)*0.5)] group-hover:[margin-top:calc(var(--show-id)*4px)]">
+                                <span class="text-[10px] block mt-0">
+                                    ${u.player.id}
+                                </span>
+                            </div>
+                        </div>
+
+                        ${u.on ? `<span class="ml-auto text-xs opacity-40 pl-4">${u.status === "out" || u.status === "offline" ? "away, " : ""} ${u.on}</span>` : ""}
+                        </a>
+                    `;
+                }).join("");
+        }
+    }
+}
+
+function refreshOnline() {
+    wsSend({ action: "online" });
+}
+
+
+function sendPing() {
     const tabbed = document.visibilityState !== "visible";
     const onGame = page !== "home page" && page !== "editing settings";
 
+    let status;
     if (!tabbed && onGame) status = "playing";
     else if (!tabbed && !onGame) status = "home";
     else if (tabbed && onGame) status = "out";
     else status = "offline";
 
-    fetch(`${API}/ping`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            player: session,
-            status,
-            on: page
-        })
-    }).catch(() => {});
+    wsSend({ action: "ping", player: session, status, on: page });
 }
+
+
+function sendLog(message) {
+    wsSend({ action: "log", player: session, message });
+}
+
+
+function sendSuggestion(suggestion) {
+    wsSend({ action: "suggest", player: session, suggestion });
+}
+
 
 function checkForUpdates() {
     fetch(`/version.txt`)
@@ -255,29 +297,6 @@ function toggleOnlinePanel() {
     setTimeout(() => document.addEventListener("mousedown", close), 150);
 }
 
-function sendLog(message, keepalive = false) {
-    fetch(`${API}/log`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            player: session,
-            message
-        }),
-        keepalive
-    }).catch(() => {});
-}
-
-function sendSuggestion(suggestion) {
-    fetch(`${API}/suggest`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            player: session,
-            suggestion
-        })
-    }).catch(() => {});
-}
-
 function submitSuggestion() {
     const input = document.getElementById("suggestion");
     const button = document.getElementById("suggest");
@@ -300,9 +319,7 @@ function submitSuggestion() {
     }
 
     const suggestion = input.value.trim();
-    if (suggestion === "") {
-        return result("#FF6666");
-    };
+    if (suggestion === "") return result("#FF6666");
 
     sendSuggestion(suggestion);
     input.value = "";
@@ -347,7 +364,6 @@ function toggleFavorite(e, id) {
     e.stopPropagation();
 
     let favs = getFavorites();
-
     const index = favs.indexOf(id);
 
     if (index > -1) {
@@ -358,8 +374,6 @@ function toggleFavorite(e, id) {
 
     localStorage.setItem("favorites", JSON.stringify(favs));
     favorites = favs;
-
-    const isFav = favs.includes(id);
 
     const searchTerm = searchBar.value.toLowerCase().trim();   
     const activeTags = Array.from(document.querySelectorAll('.tag-checkbox:checked')).map(cb => cb.value.toLowerCase());
@@ -446,9 +460,7 @@ try {
     cached = localStorage.getItem("navbar");
 } catch (e) {}
 
-if (cached) {
-    injectNavbar(cached);
-}
+if (cached) injectNavbar(cached);
 
 fetch("/components/navbar.html")
     .then(res => {
@@ -457,10 +469,7 @@ fetch("/components/navbar.html")
     })
     .then(html => {
         if (html && html !== cached) {
-            try {
-                localStorage.setItem("navbar", html);
-            } catch (e) {}
-
+            try { localStorage.setItem("navbar", html); } catch (e) {}
             injectNavbar(html);
         }
     })
@@ -501,12 +510,9 @@ fetch("/lessons.json")
     });
 
 if (searchBar) {
-    searchBar.addEventListener("input", (e) => {
+    searchBar.addEventListener("input", () => {
         const searchTerm = searchBar.value.toLowerCase().trim();
-        if (searchTerm === "") {
-            renderLessons();
-            return;
-        }
+        if (searchTerm === "") { renderLessons(); return; }
 
         const activeTags = Array.from(document.querySelectorAll('.tag-checkbox:checked')).map(cb => cb.value.toLowerCase());
         const filtered = allLessons.filter(game => {
@@ -521,7 +527,7 @@ if (searchBar) {
 
 if (checkboxes) {
     checkboxes.forEach(checkbox => {
-        checkbox.addEventListener("change", (e) => {   
+        checkbox.addEventListener("change", () => {   
             const searchTerm = searchBar.value.toLowerCase().trim();   
             const activeTags = Array.from(document.querySelectorAll('.tag-checkbox:checked')).map(cb => cb.value.toLowerCase());
             const filtered = allLessons.filter(game => {
@@ -531,20 +537,17 @@ if (checkboxes) {
             });
 
             renderLessons(filtered);
-        })
-    })
+        });
+    });
 }
 
 if (usernameInput) {
     usernameInput.value = session.username;
-    usernameInput.addEventListener("input", (e) => {
+    usernameInput.addEventListener("input", () => {
         const filter = ["nig", "n1g", "neckh"];
         const newUsername = usernameInput.value.trim();
-        if (newUsername === "") {
-            return;
-        } else if (filter.some(word => 
-            newUsername.toLowerCase().includes(word.toLowerCase())
-        )) {
+        if (newUsername === "") return;
+        if (filter.some(word => newUsername.toLowerCase().includes(word.toLowerCase()))) {
             usernameInput.value = "FriendlyStudent" + (Math.floor(Math.random() * (99999 - 11111 + 1)) + 11111);
             return;
         }
@@ -554,25 +557,19 @@ if (usernameInput) {
     });
 }
 
-window.addEventListener("beforeunload", () => {
-    isLeaving = true;
-});
+window.addEventListener("beforeunload", () => { isLeaving = true; });
 
 window.addEventListener("pagehide", () => {
     isLeaving = true;
-    sendLog(`left ${page}`, true);
+    wsSend({ action: "log", player: session, message: `left ${page}` });
 });
 
 window.addEventListener('keydown', (e) => {
-  if (e.key.toLowerCase() === 'f') {
-    document.documentElement.style.setProperty('--show-id', '1');
-  }
+    if (e.key.toLowerCase() === 'f') document.documentElement.style.setProperty('--show-id', '1');
 });
 
 window.addEventListener('keyup', (e) => {
-  if (e.key.toLowerCase() === 'f') {
-    document.documentElement.style.setProperty('--show-id', '0');
-  }
+    if (e.key.toLowerCase() === 'f') document.documentElement.style.setProperty('--show-id', '0');
 });
 
 document.addEventListener("visibilitychange", () => {
