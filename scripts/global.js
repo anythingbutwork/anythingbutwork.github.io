@@ -10,7 +10,8 @@ tailwind.config = {
                 light: "#222222",
                 success: "#66FF66",
                 fail: "#FF6666",
-                blue: "#1E90FF"
+                blue: "#1E90FF",
+                warning: "#E0AA17"
             }
         }
     }
@@ -20,6 +21,17 @@ const WORDS = [
     "Notebook", "Pencil", "Eraser", "Stapler", "Binder", "Marker",
     "Compass", "Ruler", "Scissors", "Highlighter", "Folder", "Clipboard"
 ];
+const schedule = [
+    { name: "Period 1", start: "07:10", end: "07:59" },
+    { name: "Period 2", start: "08:04", end: "08:53" },
+    { name: "Period 3", start: "08:58", end: "09:54" },
+    { name: "Period 4", start: "09:59", end: "10:48" },
+    { name: "Period 5", start: "10:53", end: "11:42" },
+    { name: "Lunch",    start: "11:42", end: "12:15" },
+    { name: "Period 6", start: "12:22", end: "13:11" },
+    { name: "Period 7", start: "13:16", end: "14:05" }
+];
+
 const API = "https://logs-psvq.onrender.com/api";
 const path = window.location.pathname;
 const searchBar = document.getElementById("search");
@@ -61,7 +73,7 @@ async function refreshOnline() {
                     .map((u) => {
                         const dotColor = {
                             playing: '#66FF66',
-                            out: '#F0B232',
+                            out: '#E0AA17',
                             home: '#1E90FF',
                             offline: '#FF6666',
                         }[u.status] ?? '#AAAAAA';
@@ -126,6 +138,37 @@ function checkForUpdates() {
                 version = response;
             }
         })
+}
+
+function updateRemainingTime() {
+    const now = new Date();
+    const currentSeconds = (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds();
+    const displayElement = document.getElementById('period-remaining');
+
+    let currentPeriod = schedule.find(p => {
+        const [sH, sM] = p.start.split(':').map(Number);
+        const [eH, eM] = p.end.split(':').map(Number);
+        const startSec = (sH * 3600) + (sM * 60);
+        const endSec = (eH * 3600) + (eM * 60);
+        return currentSeconds >= startSec && currentSeconds < endSec;
+    });
+
+    if (currentPeriod) {
+        const [eH, eM] = currentPeriod.end.split(':').map(Number);
+        const endSec = (eH * 3600) + (eM * 60);
+        const remainingSec = endSec - currentSeconds;
+
+        displayElement.classList.remove("hidden");
+
+        if (remainingSec < 60) {
+            displayElement.innerHTML = `<b>${remainingSec} seconds</b> until the end of ${currentPeriod.name}`;
+        } else {
+            const remainingMin = Math.ceil(remainingSec / 60);
+            displayElement.innerHTML = `<b>${remainingMin} minutes</b> until the end of ${currentPeriod.name}`;
+        }
+    } else {
+        displayElement.classList.add("hidden");
+    }
 }
 
 function toggleFilterMenu() {
@@ -500,3 +543,6 @@ document.addEventListener("visibilitychange", () => {
 
 checkForUpdates();
 setInterval(checkForUpdates, 15000);
+
+updateRemainingTime();
+setInterval(updateRemainingTime, 1000);
