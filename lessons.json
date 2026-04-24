@@ -5546,12 +5546,19 @@
         {
             "id": 2307,
             "name": "Balatro GBA",
-            "lesson": null,
-            "image": "/assets/games/balatro.png",
-            "file": "/extras/balatro.html",
+            "path": "/extras/BalatroGBA",
             "tags": [
                 "strategy",
                 "casual"
+            ]
+        },
+        {
+            "id": 2308,
+            "name": "Drive Mad 2",
+            "path": "/extras/DriveMad2",
+            "tags": [
+                "driving",
+                "skill"
             ]
         }
     ]

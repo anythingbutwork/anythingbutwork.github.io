@@ -16,11 +16,11 @@ fetch("/lessons.json")
         }
 
         const lessonGroup = lesson.lesson;
-        if (lessonGroup === null && !lesson.file) {
+        if (lessonGroup === null && !lesson.path) {
             return;
         }
 
-        frame.src = lesson.file || `https://lesson126.github.io/lesson${lessonGroup}/lesson-${lessonId}`;
+        frame.src = (lesson.path && lesson.path + "/game.html") || `https://lesson126.github.io/lesson${lessonGroup}/lesson-${lessonId}`;
         name.textContent = lesson.name;
     });
 
