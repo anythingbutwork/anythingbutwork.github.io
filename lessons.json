@@ -5589,6 +5589,15 @@
                 "driving",
                 "skill"
             ]
+        },
+        {
+            "id": 2312,
+            "name": "Infinite Craft",
+            "path": "/extras/InfiniteCraft",
+            "tags": [
+                "casual",
+                "strategy"
+            ]
         }
     ]
 }
