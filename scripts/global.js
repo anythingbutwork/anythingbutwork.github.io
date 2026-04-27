@@ -10,13 +10,22 @@ tailwind.config = {
                 light: "#222222",
                 success: "#66FF66",
                 fail: "#FF6666",
-                blue: "#1E90FF",
-                warning: "#E0AA17"
+                warning: "#E0AA17",
+                theme: "var(--theme-color, #1E90FF)" 
             }
         }
     }
 };
 
+const THEMES = {
+    red: "#fb3a3a",
+    orange: "#E0AA17",
+    yellow: "#dbdb17",
+    green: "#009a00",
+    blue: "#1E90FF",
+    pink: "#FF66FF",
+    purple: "#C300FF"
+}
 const WORDS = [
     "Notebook", "Pencil", "Eraser", "Stapler", "Binder", "Marker",
     "Compass", "Ruler", "Scissors", "Highlighter", "Folder", "Clipboard"
@@ -35,7 +44,10 @@ const schedule = [
 const WS_URL = "wss://logs-psvq.onrender.com";
 const path = window.location.pathname;
 const searchBar = document.getElementById("search");
+const colorOptions = document.getElementById("color-options");
 const usernameInput = document.getElementById("username");
+const idInput = document.getElementById("id");
+
 const checkboxes = document.querySelectorAll('.tag-checkbox');
 document.documentElement.style.setProperty('--show-id', '0');
 const session = getSession();
@@ -228,8 +240,8 @@ function toggleFilterMenu() {
         return;
     }
 
-    button.style.borderColor = "dodgerblue";
-    button.style.boxShadow = "0 0 10px dodgerblue";
+    button.style.borderColor = "var(--theme-color)";
+    button.style.boxShadow = "0 0 10px var(--theme-color)";
     menu.style.display = "block";
     menu.style.opacity = "0";
     menu.style.transform = "transform";
@@ -327,6 +339,20 @@ function injectNavbar(html) {
     const el = document.getElementById("navbar");
     if (el) el.innerHTML = html;
 }
+
+function getTheme() {
+    let theme = localStorage.getItem("theme");
+
+    if (!theme || !Object.values(THEMES).includes(theme)) {
+        theme = THEMES.blue;
+        localStorage.setItem("theme", theme);
+    }
+
+    return theme;
+}
+
+let currentTheme = getTheme();
+document.documentElement.style.setProperty('--theme-color', currentTheme);
 
 function getSession() {
     let session = localStorage.getItem("session");
@@ -572,6 +598,28 @@ if (usernameInput) {
         session.username = usernameInput.value;
         localStorage.setItem("session", JSON.stringify(session));
     });
+}
+
+if (idInput) {
+    idInput.value = session.id;
+}
+
+if (colorOptions) {
+    for (const [theme, hex] of Object.entries(THEMES)) {
+        const btn = document.createElement("button");
+        btn.className = "w-8 h-8 rounded-full";
+        btn.style.backgroundColor = hex;
+        btn.style.border = getTheme() === hex ? "2px solid #fff" : "none";
+        colorOptions.appendChild(btn);
+
+        btn.addEventListener("click", () => {
+            localStorage.setItem("theme", hex);
+            document.documentElement.style.setProperty('--theme-color', hex);
+            Array.from(colorOptions.children).forEach(child => {
+                child.style.border = child === btn ? "2px solid #fff" : "none";
+            });
+        });
+    }
 }
 
 window.addEventListener("beforeunload", () => leave);
