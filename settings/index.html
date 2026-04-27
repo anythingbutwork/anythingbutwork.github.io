@@ -23,6 +23,16 @@
         <h1 class="leading-none text-2xl font-semibold mb-2">Username</h1>
         <input class="username" type="text" id="username" maxlength="25" placeholder="Enter username..." autocomplete="off">
     </div>
+
+    <div class="card bg-light">
+        <h1 class="text-xs opacity-75">SUGGESTIONS</h1>
+        <hr class="divider">
+        <h1 class="leading-none text-2xl font-semibold mb-2">Submit a Suggestion</h1>
+        <div class="flex gap-3 items-center relative">
+            <input class="suggestion" type="text" id="suggestion" placeholder="What should be added or changed?" autocomplete="off">
+            <button id="suggest" class="suggest" onclick="submitSuggestion()"></button>
+        </div>
+    </div>
   </main>
   
   <script src="/scripts/global.js"></script>

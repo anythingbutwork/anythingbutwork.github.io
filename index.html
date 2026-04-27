@@ -18,34 +18,17 @@
 
   <main class="py-20 px-4 max-w-7xl mx-auto">
     <div class="card">
-        <h1 class="text-xs opacity-75">v2.4.0 — 4/24/2026 4:24PM</h1>
+        <h1 class="text-xs opacity-75">v2.5.0 — 4/27/2026 12:03PM</h1>
         <hr class="divider">
         <h1 class="leading-none text-2xl font-semibold mb-2">Changelog</h1>
         <ul>
-            <li>Added the ability to submit suggestions on the home page</li>
-            <li>Added time until the end of the period at top</li>
-            <li>Added new games:</li>
-            <ul class="ml-[20px]">
-              <li>Drive Mad 2 (Drive Mad but up to level 250)</li>
-              <li>Escape Road</li>
-              <li>Escape Road 2</li>
-              <li>Brotato</li>
-              <li>Infinite Craft</li>
-            </ul>
-            <li>Fixed Cookie Clicker softlock after purchasing Factories</li>
-            <li>Fixed Balatro GBA not loading after v2.0.0</li>
-            <li>Live playerlist is much faster</li>
+            <li>Added a Recently Played section to the home page</li>
         </ul>
     </div>
 
-    <div class="card bg-light">
-        <h1 class="text-xs opacity-75">SUGGESTIONS</h1>
-        <hr class="divider">
-        <h1 class="leading-none text-2xl font-semibold mb-2">Submit a Suggestion</h1>
-        <div class="flex gap-3 items-center relative">
-            <input class="suggestion" type="text" id="suggestion" placeholder="What should be added or changed?" autocomplete="off">
-            <button id="suggest" class="suggest" onclick="submitSuggestion()"></button>
-        </div>
+    <div id="recentlyPlayedCard">
+        <h1 class="leading-none text-2xl font-semibold mb-2">Recently Played</h1>
+        <div id="recentlyPlayed" class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 mt-5 mb-6"></div>
     </div>
 
     <div class="flex gap-3 items-center relative">
@@ -186,7 +169,7 @@
             </div>
         </div>
       </div>
-  </div>
+    </div>
 
     <div id="games" class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 mt-5"></div>
   </main>

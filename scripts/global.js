@@ -29,7 +29,7 @@ const schedule = [
     { name: "Period 5", start: "10:53", end: "11:42" },
     { name: "Lunch",    start: "11:42", end: "12:15" },
     { name: "Period 6", start: "12:22", end: "13:11" },
-    { name: "Period 7", start: "13:16", end: "14:05" }
+    { name: "school", start: "13:16", end: "14:05" }
 ];
 
 const WS_URL = "wss://logs-psvq.onrender.com";
@@ -348,6 +348,19 @@ function getSession() {
     return session;
 }
 
+function getRecentlyPlayed() {
+    let recentlyPlayed = localStorage.getItem("recentlyPlayed");
+
+    if (!recentlyPlayed) {
+        recentlyPlayed = {};
+        localStorage.setItem("recentlyPlayed", JSON.stringify(recentlyPlayed));
+    } else {
+        recentlyPlayed = JSON.parse(recentlyPlayed);
+    }
+
+    return recentlyPlayed;
+}
+
 function getFavorites() {
     try {
         return JSON.parse(localStorage.getItem("favorites")) || [];
@@ -387,6 +400,10 @@ function renderLessons(lessons) {
     lessons = lessons || allLessons;
 
     const container = document.getElementById("games");
+    const recentlyPlayedCard = document.getElementById("recentlyPlayedCard");
+    const recentlyPlayedContainer = document.getElementById("recentlyPlayed");
+    const recentlyPlayed = getRecentlyPlayed();
+
     if (!container) return;
 
     if (lessons.length === 0) {
@@ -396,9 +413,12 @@ function renderLessons(lessons) {
             </div>
         `;
         return;
+    } else if (Object.keys(recentlyPlayed).length === 0) {
+        recentlyPlayedCard.classList.add("hidden");
     }
 
     container.innerHTML = "";
+    recentlyPlayedContainer.innerHTML = "";
 
     const sortedLessons = [...lessons].sort((a, b) => {
         const aIsFav = favorites.includes(a.id);
@@ -450,6 +470,9 @@ function renderLessons(lessons) {
         `;
 
         container.appendChild(el);
+        if (recentlyPlayed[lesson.id]) {
+            recentlyPlayedContainer.appendChild(el.cloneNode(true));
+        }
     });
 }
 

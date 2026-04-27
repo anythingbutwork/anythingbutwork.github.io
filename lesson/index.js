@@ -7,6 +7,19 @@ const warning = document.getElementById("lessonWarning");
 const warningText = document.getElementById("lessonWarningText");
 const fullscreen = document.getElementById("fullscreen");
 
+function getRecentlyPlayed() {
+    let recentlyPlayed = localStorage.getItem("recentlyPlayed");
+
+    if (!recentlyPlayed) {
+        recentlyPlayed = {};
+        localStorage.setItem("recentlyPlayed", JSON.stringify(recentlyPlayed));
+    } else {
+        recentlyPlayed = JSON.parse(recentlyPlayed);
+    }
+
+    return recentlyPlayed;
+}
+
 fetch("/lessons.json")
     .then(res => res.json())
     .then(data => {
@@ -29,6 +42,10 @@ fetch("/lessons.json")
             warningText.innerHTML = lesson.warning;
             warning.classList.remove("hidden");
         }
+
+        const recentlyPlayed = getRecentlyPlayed();
+        recentlyPlayed[lessonId] = Date.now();
+        localStorage.setItem("recentlyPlayed", JSON.stringify(recentlyPlayed));
     });
 
 fullscreen.addEventListener("click", () => {

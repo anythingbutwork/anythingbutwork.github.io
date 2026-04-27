@@ -1,0 +1,7 @@
+- Recently played category
+- Theme selection
+- Fix blumgi soccer
+- Hide key
+- New games
+    - Granny
+    - Vexx
