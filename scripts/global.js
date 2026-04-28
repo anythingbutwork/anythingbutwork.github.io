@@ -5,13 +5,13 @@ tailwind.config = {
                 sans: ["Inter", "system-ui", "sans-serif"]
             },
             colors: {
-                bg: "#111111",
-                accent: "#161616",
-                light: "#222222",
-                success: "#66FF66",
-                fail: "#FF6666",
-                warning: "#E0AA17",
-                theme: "var(--theme-color, #1E90FF)" 
+                bg: "var(--color-bg)",
+                accent: "var(--color-accent)",
+                light: "var(--color-light)",
+                success: "var(--color-success)",
+                fail: "var(--color-fail)",
+                warning: "var(--color-warning)",
+                theme: "var(--color-theme)" 
             }
         }
     }
@@ -24,7 +24,10 @@ const THEMES = {
     green: "#009a00",
     blue: "#1E90FF",
     pink: "#FF66FF",
-    purple: "#C300FF"
+    purple: "#C300FF",
+    dark: "#444",
+    light: "#B8B8B8",
+    default: "#FFF"
 }
 const WORDS = [
     "Notebook", "Pencil", "Eraser", "Stapler", "Binder", "Marker",
@@ -240,8 +243,8 @@ function toggleFilterMenu() {
         return;
     }
 
-    button.style.borderColor = "var(--theme-color)";
-    button.style.boxShadow = "0 0 10px var(--theme-color)";
+    button.style.borderColor = "var(--color-theme)";
+    button.style.boxShadow = "0 0 10px var(--color-theme)";
     menu.style.display = "block";
     menu.style.opacity = "0";
     menu.style.transform = "transform";
@@ -344,15 +347,31 @@ function getTheme() {
     let theme = localStorage.getItem("theme");
 
     if (!theme || !Object.values(THEMES).includes(theme)) {
-        theme = THEMES.blue;
+        theme = THEMES.default;
         localStorage.setItem("theme", theme);
     }
 
     return theme;
 }
 
-let currentTheme = getTheme();
-document.documentElement.style.setProperty('--theme-color', currentTheme);
+function loadTheme() {
+    let currentTheme = getTheme();
+    if (currentTheme === "#FFF") {
+        document.documentElement.style.setProperty("--color-bg", "#111111");
+        document.documentElement.style.setProperty("--color-accent", "#161616");
+        document.documentElement.style.setProperty("--color-light", "#222222");
+        document.documentElement.style.setProperty("--color-lighter", "#262626");
+        document.documentElement.style.setProperty("--color-theme", "#1E90FF");
+    } else {
+        document.documentElement.style.setProperty("--color-bg", `color-mix(in srgb, ${currentTheme} 15%, #000000)`);
+        document.documentElement.style.setProperty("--color-accent", `color-mix(in srgb, ${currentTheme} 25%, #000000)`);
+        document.documentElement.style.setProperty("--color-light", `color-mix(in srgb, ${currentTheme} 35%, #000000)`);
+        document.documentElement.style.setProperty("--color-lighter", `color-mix(in srgb, ${currentTheme} 40%, #000000)`);
+        document.documentElement.style.setProperty('--color-theme', currentTheme);
+    }
+}
+
+loadTheme();
 
 function getSession() {
     let session = localStorage.getItem("session");
@@ -608,13 +627,21 @@ if (colorOptions) {
     for (const [theme, hex] of Object.entries(THEMES)) {
         const btn = document.createElement("button");
         btn.className = "w-8 h-8 rounded-full";
-        btn.style.backgroundColor = hex;
+        btn.style.backgroundColor = hex === "#FFF" ? "#FFFFFF00" : hex;
         btn.style.border = getTheme() === hex ? "2px solid #fff" : "none";
+        if (hex === "#FFF") {
+            btn.style.backgroundImage = "url('/assets/icons/reset.png')";
+            btn.style.backgroundRepeat = "no-repeat";
+            btn.style.backgroundPosition = "center";
+            btn.style.backgroundSize = "1.2em";
+        }
+
         colorOptions.appendChild(btn);
 
         btn.addEventListener("click", () => {
             localStorage.setItem("theme", hex);
-            document.documentElement.style.setProperty('--theme-color', hex);
+            document.documentElement.style.setProperty('--color-theme', hex);
+            loadTheme();
             Array.from(colorOptions.children).forEach(child => {
                 child.style.border = child === btn ? "2px solid #fff" : "none";
             });

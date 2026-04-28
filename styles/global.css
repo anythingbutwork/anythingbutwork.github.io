@@ -1,3 +1,14 @@
+:root {
+  --color-theme: "#FFF";
+  --color-bg: color-mix(in srgb, var(--color-theme) 15%, #000000);
+  --color-accent: color-mix(in srgb, var(--color-theme) 25%, #000000);
+  --color-light: color-mix(in srgb, var(--color-theme) 35%, #000000);
+  --color-lighter: color-mix(in srgb, var(--color-theme) 40%, #000000);
+  --color-success: #66FF66;
+  --color-fail: #FF6666;
+  --color-warning: #E0AA17;
+}
+
 html {
     scrollbar-gutter: stable;
     font-family: "Inter", system-ui, sans-serif;
@@ -57,12 +68,11 @@ li.dot-li::before {
 }
 
 .nav-link:hover {
-    background-color: var(--theme-color, dodgerblue);
+    background-color: var(--color-theme, dodgerblue);
 }
 
 .card {
-    background-color: var(--theme-color, dodgerblue);;
-    border-color: white;
+    background-color: var(--color-theme, dodgerblue);;
     padding: 25px;
     border-radius: 20px;
     margin-top: 15px;
@@ -70,7 +80,7 @@ li.dot-li::before {
 }
 
 .suggest {
-  background-color: #161616;
+  background-color: var(--color-accent);
   border-radius: 20px;
   height: 100%;
   aspect-ratio: 1 / 1;
@@ -85,7 +95,7 @@ li.dot-li::before {
 }
 
 .filter {
-  background-color: #222;
+  background-color: var(--color-light);
   border-radius: 20px;
   height: 100%;
   aspect-ratio: 1 / 1;
@@ -93,11 +103,15 @@ li.dot-li::before {
   border: 2px solid transparent;
   cursor: pointer;
   transition: all 0.1s ease-in-out;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 6px rgba(0,0,0,0);
   background-image: url("/assets/icons/filter.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 1.5em;
+}
+
+.filter:hover {
+  background-color: var(--color-lighter);
 }
 
 .filter-menu {
@@ -138,7 +152,7 @@ li.dot-li::before {
 }
 
 .search {
-  background-color: #222;
+  background-color: var(--color-light);
   border-radius: 20px;
   padding: 10px 40px;
   width: 100%;
@@ -146,7 +160,7 @@ li.dot-li::before {
   color: #fff;
   outline: none;
   transition: all 0.1s ease-in-out;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 6px rgba(0,0,0,0);
   background-image: url("/assets/icons/search.png");
   background-repeat: no-repeat;
   background-position: 1em center;
@@ -154,13 +168,13 @@ li.dot-li::before {
 }
 
 .search:focus {
-  background-color: #2a2a2a;
-  border-color: var(--theme-color, dodgerblue);;
-  box-shadow: 0 0 10px var(--theme-color, dodgerblue);;
+  background-color: var(--color-light);
+  border-color: var(--color-theme, dodgerblue);;
+  box-shadow: 0 0 10px var(--color-theme, dodgerblue);;
 }
 
 .search:hover {
-  background-color: #242424;
+  background-color: var(--color-lighter);
 }
 
 .search::placeholder {
@@ -168,7 +182,7 @@ li.dot-li::before {
 }
 
 .id {
-  background-color: #161616;
+  background-color: var(--color-accent);
   border-radius: 20px;
   padding: 10px 45px;
   width: 100%;
@@ -183,7 +197,7 @@ li.dot-li::before {
 }
 
 .username {
-  background-color: #161616;
+  background-color: var(--color-accent);
   border-radius: 20px;
   padding: 10px 45px;
   width: 100%;
@@ -199,13 +213,13 @@ li.dot-li::before {
 }
 
 .username:focus {
-  background-color: #2a2a2a;
-  border-color: var(--theme-color, dodgerblue);;
-  box-shadow: 0 0 10px var(--theme-color, dodgerblue);;
+  background-color: var(--color-lighter);
+  border-color: var(--color-theme, dodgerblue);;
+  box-shadow: 0 0 10px var(--color-theme, dodgerblue);;
 }
 
 .username:hover {
-  background-color: #181818;
+  background-color: var(--color-lighter);
 }
 
 .username::placeholder {
@@ -213,7 +227,7 @@ li.dot-li::before {
 }
 
 .suggestion {
-  background-color: #161616;
+  background-color: var(--color-accent);
   border-radius: 20px;
   padding: 10px 45px;
   width: 100%;
@@ -229,13 +243,13 @@ li.dot-li::before {
 }
 
 .suggestion:focus {
-  background-color: #2a2a2a;
-  border-color: var(--theme-color, dodgerblue);;
-  box-shadow: 0 0 10px var(--theme-color, dodgerblue);;
+  background-color: var(--color-lighter);
+  border-color: var(--color-theme, dodgerblue);;
+  box-shadow: 0 0 10px var(--color-theme, dodgerblue);;
 }
 
 .suggestion:hover {
-  background-color: #181818;
+  background-color: var(--color-lighter);
 }
 
 .suggestion::placeholder {
@@ -289,7 +303,7 @@ li.dot-li::before {
   position: absolute;
   right: 0;
   top: calc(100% + 10px);
-  background-color: #1a1a1a;
+  background-color: var(--color-bg);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 14px;
   min-width: 400px;
@@ -422,8 +436,8 @@ li.dot-li::before {
 }
 
 .tag-checkbox:checked + .checkbox-box {
-    background-color: var(--theme-color, dodgerblue);;
-    border-color: var(--theme-color, dodgerblue);;
+    background-color: var(--color-theme, dodgerblue);;
+    border-color: var(--color-theme, dodgerblue);;
 }
 
 .tag-checkbox:checked + .checkbox-box svg {
