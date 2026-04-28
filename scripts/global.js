@@ -59,6 +59,7 @@ let isLeaving = false;
 let cached = null;
 let favorites = getFavorites();
 let allLessons = [];
+let online = [];
 let version;
 let page;
 
@@ -80,7 +81,9 @@ function wsConnect() {
         try { data = JSON.parse(event.data); } catch { return; }
 
         if (data.action === "online") {
+            online = data.online || [];
             renderOnline(data);
+            updatePlayerCounts();
         }
     });
 
@@ -155,6 +158,29 @@ function renderOnline(data) {
                 }).join("");
         }
     }
+}
+
+function updatePlayerCounts() {
+    online.forEach(u => {
+        const match = u.on?.match(/#(\d+)/);
+        if (!match) return;
+        const id = match[1];
+        const el = document.getElementById(`playercount-${id}`);
+        if (el) {
+            const count = getOnline(id);
+            el.querySelector(".playercount-num").textContent = count;
+            el.classList.toggle("hidden", count === 0);
+        }
+    });
+}
+
+function getOnline(lessonId) {
+    if (!online) return 0;
+
+    return online.filter(u => {
+        const match = u.on?.match(/#(\d+)/);
+        return match && match[1] === String(lessonId);
+    }).length;
 }
 
 function leave() {
@@ -482,6 +508,8 @@ function renderLessons(lessons) {
         el.dataset.lesson = lesson.id;
         el.dataset.name = lesson.name;
 
+        const playercount = getOnline(lesson.id);
+
         el.innerHTML = `
             <a href="/lesson/?id=${lesson.id}" class="group relative flex flex-col gap-2">
                 <div class="relative overflow-hidden rounded-xl">
@@ -493,6 +521,11 @@ function renderLessons(lessons) {
                     <div class="pointer-events-none absolute inset-0 z-10
                         bg-gradient-to-bl from-black/70 via-black/30 to-transparent
                         opacity-0 group-hover:opacity-100 transition">
+                    </div>
+
+                    <div class="absolute bottom-2 right-2 z-20 flex items-center gap-1 bg-black/30 backdrop-blur-sm rounded-full px-2 py-0.5 text-xs font-medium${playercount > 0 ? "" : " hidden"}" id="playercount-${lesson.id}">
+                        <img src="/assets/icons/person.png" class="w-3 h-3 object-contain" />
+                        <span class="playercount-num">${playercount}</span>
                     </div>
 
                     <button 
