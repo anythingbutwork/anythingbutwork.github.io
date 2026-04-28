@@ -8,9 +8,9 @@ tailwind.config = {
                 bg: "var(--color-bg)",
                 accent: "var(--color-accent)",
                 light: "var(--color-light)",
-                success: "var(--color-success)",
-                fail: "var(--color-fail)",
-                warning: "var(--color-warning)",
+                success: "rgb(var(--color-success))",
+                fail: "rgb(var(--color-fail))",
+                warning: "rgb(var(--color-warning))",
                 theme: "var(--color-theme)" 
             }
         }

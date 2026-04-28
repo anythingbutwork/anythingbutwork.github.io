@@ -4,9 +4,9 @@
   --color-accent: color-mix(in srgb, var(--color-theme) 25%, #000000);
   --color-light: color-mix(in srgb, var(--color-theme) 35%, #000000);
   --color-lighter: color-mix(in srgb, var(--color-theme) 40%, #000000);
-  --color-success: #66FF66;
-  --color-fail: #FF6666;
-  --color-warning: #E0AA17;
+  --color-success: 102 255 102;
+  --color-fail: 255 102 102;
+  --color-warning: 224 170 23;
 }
 
 html {
