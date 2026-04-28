@@ -602,10 +602,16 @@ function renderLessons(lessons) {
         `;
 
         container.appendChild(el);
-        if (recentlyPlayed[lesson.id]) {
-            recentlyPlayedContainer.appendChild(el.cloneNode(true));
-        }
     });
+
+    const cols = window.innerWidth >= 1024 ? 8 : window.innerWidth >= 768 ? 6 : 4;
+    Object.entries(recentlyPlayed)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, cols)
+        .forEach(([id]) => {
+            const el = container.querySelector(`[data-lesson="${id}"]`);
+            if (el) recentlyPlayedContainer.appendChild(el.cloneNode(true));
+        });
 }
 
 try {
