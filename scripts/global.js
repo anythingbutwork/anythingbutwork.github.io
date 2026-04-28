@@ -29,6 +29,32 @@ const THEMES = {
     light: "#B8B8B8",
     default: "#FFF"
 }
+const DISGUISES = {
+    canvas: {
+        icon: "/assets/icons/canvas.png",
+        title: "Inbox"
+    },
+    clever: {
+        icon: "/assets/icons/clever.png",
+        title: "Clever | Portal"
+    },
+    focus: {
+        icon: "/assets/icons/focus.png",
+        title: "Student Info"
+    },
+    bigideas: {
+        icon: "/assets/icons/bigideas.png",
+        title: "Assignment Player"
+    },
+    studysync: {
+        icon: "/assets/icons/studysync.png",
+        title: "StudySync - Assignments"
+    },
+    mcgrawhill: {
+        icon: "/assets/icons/mcgrawhill.png",
+        title: "My Classes | McGraw Hill"
+    }
+};
 const WORDS = [
     "Notebook", "Pencil", "Eraser", "Stapler", "Binder", "Marker",
     "Compass", "Ruler", "Scissors", "Highlighter", "Folder", "Clipboard"
@@ -48,6 +74,7 @@ const WS_URL = "wss://logs-psvq.onrender.com";
 const path = window.location.pathname;
 const searchBar = document.getElementById("search");
 const colorOptions = document.getElementById("color-options");
+const disguiseOptions = document.getElementById("disguise-options");
 const usernameInput = document.getElementById("username");
 const idInput = document.getElementById("id");
 
@@ -369,6 +396,33 @@ function injectNavbar(html) {
     if (el) el.innerHTML = html;
 }
 
+function getDisguise() {
+    let disguise = localStorage.getItem("disguise");
+
+    if (!disguise || !DISGUISES[disguise]) {
+        disguise = "canvas";
+        localStorage.setItem("disguise", disguise);
+    }
+
+    return disguise;
+}
+
+function loadDisguise() {
+    let currentDisguise = getDisguise();
+    let disguise = DISGUISES[currentDisguise] || DISGUISES.canvas;
+    let link = document.querySelector("link[rel*='icon']");
+    if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+    }
+    
+    document.title = disguise.title;
+    link.href = disguise.icon;
+}
+
+loadDisguise();
+
 function getTheme() {
     let theme = localStorage.getItem("theme");
 
@@ -661,7 +715,8 @@ if (colorOptions) {
         const btn = document.createElement("button");
         btn.className = "w-8 h-8 rounded-full";
         btn.style.backgroundColor = hex === "#FFF" ? "#FFFFFF00" : hex;
-        btn.style.border = getTheme() === hex ? "2px solid #fff" : "none";
+        btn.style.boxShadow = getTheme() === hex ? "0 0 25px var(--color-theme)" : "0 0 10px transparent";
+        btn.style.opacity = getTheme() === hex ? "1" : "0.5";
         if (hex === "#FFF") {
             btn.style.backgroundImage = "url('/assets/icons/reset.png')";
             btn.style.backgroundRepeat = "no-repeat";
@@ -676,7 +731,48 @@ if (colorOptions) {
             document.documentElement.style.setProperty('--color-theme', hex);
             loadTheme();
             Array.from(colorOptions.children).forEach(child => {
-                child.style.border = child === btn ? "2px solid #fff" : "none";
+                child.style.opacity = child === btn ? "1" : "0.5";
+                child.style.boxShadow = child === btn ? "0 0 25px var(--color-theme)" : "0 0 10px transparent";
+            });
+        });
+    }
+}
+
+if (disguiseOptions) {
+    for (const [name, disguise] of Object.entries(DISGUISES)) {
+        const btn = document.createElement("button");
+        btn.className = "flex items-center gap-2 rounded-full px-3 h-8";
+        btn.style.backgroundColor = "#333333";
+        btn.style.boxShadow = getDisguise() === name ? "0 0 10px var(--color-theme)" : "0 0 10px transparent";
+        btn.style.opacity = getDisguise() === name ? "1" : "0.5";
+
+        const icon = document.createElement("span");
+        icon.style.width = "1.2em";
+        icon.style.height = "1.2em";
+        icon.style.backgroundImage = "url('" + disguise.icon + "')";
+        icon.style.backgroundRepeat = "no-repeat";
+        icon.style.backgroundPosition = "center";
+        icon.style.backgroundSize = "contain";
+        icon.style.display = "inline-block";
+        icon.style.flexShrink = "0";
+
+        const label = document.createElement("span");
+        label.textContent = disguise.title;
+        label.style.fontSize = "0.75rem";
+        label.style.fontWeight = "500";
+        label.style.color = "#fff";
+        label.style.whiteSpace = "nowrap";
+
+        btn.appendChild(icon);
+        btn.appendChild(label);
+        disguiseOptions.appendChild(btn);
+
+        btn.addEventListener("click", () => {
+            localStorage.setItem("disguise", name);
+            loadDisguise();
+            Array.from(disguiseOptions.children).forEach(child => {
+                child.style.boxShadow = child === btn ? "0 0 10px var(--color-theme)" : "0 0 10px transparent";
+                child.style.opacity = child === btn ? "1" : "0.5";
             });
         });
     }
