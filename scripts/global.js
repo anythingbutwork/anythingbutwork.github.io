@@ -113,6 +113,19 @@ function wsConnect() {
             online = data.online || [];
             renderOnline(data);
             updatePlayerCounts();
+        } else if (data.action === "chat") {
+            renderChatMessage(data);
+        } else if (data.action === "chatHistory") {
+            data.messages.forEach(msg => renderChatMessage(msg));
+            renderChatMessage({
+                action: "chat",
+                player: {
+                    username: "System",
+                    id: "System"
+                },
+                content: "Welcome to the Global Chat! All messages are automatically moderated.",
+                timestamp: Math.floor(Date.now() / 1000)
+            });
         }
     });
 
@@ -237,6 +250,10 @@ function sendLog(message) {
 
 function sendSuggestion(suggestion) {
     wsSend({ action: "suggest", player: session, suggestion });
+}
+
+function sendChatMessage(content) {
+    wsSend({ action: "chat", player: session, content });
 }
 
 function checkForUpdates() {
@@ -364,6 +381,44 @@ function toggleOnlinePanel() {
     setTimeout(() => document.addEventListener("mousedown", close), 150);
 }
 
+function toggleChatMenu() {
+    const menu = document.getElementById("chat-menu");
+    if (!menu) return;
+
+    const isOpen = menu.style.display === "flex";
+
+    if (isOpen) {
+        menu.style.opacity = "0";
+        menu.style.transform = "scale(0.92) translateY(-6px)";
+        setTimeout(() => menu.style.display = "none", 150);
+        return;
+    }
+
+    menu.style.display = "flex";
+    menu.style.opacity = "0";
+    menu.style.transform = "scale(0.92) translateY(-6px)";
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            menu.style.opacity = "1";
+            menu.style.transform = "scale(1) translateY(0)";
+            chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+        });
+    });
+    
+    const close = (e) => {
+        const btn = document.getElementById("chat-button");
+        if (btn && btn.contains(e.target)) return;
+        if (menu.contains(e.target)) return;
+        menu.style.opacity = "0";
+        menu.style.transform = "scale(0.92) translateY(-6px)";
+        setTimeout(() => menu.style.display = "none", 150);
+        document.removeEventListener("mousedown", close);
+    };
+
+    setTimeout(() => document.addEventListener("mousedown", close), 150);
+}
+
 function submitSuggestion() {
     const input = document.getElementById("suggestion");
     const button = document.getElementById("suggest");
@@ -391,6 +446,33 @@ function submitSuggestion() {
     sendSuggestion(suggestion);
     input.value = "";
     return result("#66FF66");
+}
+
+function submitChatMessage(wasButton) {
+    const input = document.getElementById("chat-input");
+    const button = document.getElementById("chat-send");
+    if (!input) return;
+
+    function result(color) {
+        if (!wasButton) return;
+        input.style.borderColor = color;
+        input.style.boxShadow = `0 0 10px ${color}`;
+        button.style.borderColor = color;
+        button.style.boxShadow = `0 0 10px ${color}`;
+        return setTimeout(() => {
+            input.style.borderColor = "";
+            input.style.boxShadow = "";
+            button.style.borderColor = "";
+            button.style.boxShadow = "";
+        }, 500);
+    }
+
+    const message = input.value.trim();
+    if (message === "") return result("#FF6666");
+
+    sendChatMessage(message);
+    input.value = "";
+    return;
 }
 
 function injectNavbar(html) {
@@ -641,6 +723,40 @@ fetch("/components/navbar.html")
     })
     .catch(() => {});
 
+    
+const chatMessagesContainer = document.getElementById("chat-messages");
+
+let lastSenderId = null;
+
+function renderChatMessage(message) {
+    const isSelf = message.player.id === session.id;
+
+    const d = new Date(message.timestamp * 1000);
+    const h = d.getHours();
+    const time = `${h % 12 || 12}:${String(d.getMinutes()).padStart(2, "0")} ${h >= 12 ? "PM" : "AM"}`;
+
+    const showHeader = message.player.id !== lastSenderId;
+    lastSenderId = message.player.id;
+
+    if (showHeader) {
+        const header = document.createElement("div");
+        header.className = `flex items-center ${isSelf ? "justify-end" : ""} gap-1 mt-3 px-1`;
+        header.innerHTML = `
+            ${isSelf ? `<span class="text-xs text-white/50">${time}</span>` : ""}
+            <span class="text-sm text-white font-bold">${message.player.username}</span>
+            ${!isSelf ? `<span class="text-xs text-white/50">${time}</span>` : ""}
+        `;
+        chatMessagesContainer.appendChild(header);
+    }
+
+    const el = document.createElement("li");
+    el.className = `${isSelf ? "bg-theme self-end ml-8" : "bg-lighter/75 mr-8"} rounded-xl px-4 py-2 break-words min-w-0 max-w-full`;
+    el.innerHTML = `<span class="text-sm text-white">${message.content}</span>`;
+
+    chatMessagesContainer.appendChild(el);
+    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+}
+
 fetch("/lessons.json")
     .then(res => res.json())
     .then(data => {
@@ -800,7 +916,11 @@ window.addEventListener("beforeunload", () => leave);
 window.addEventListener("pagehide", () => leave);
 
 window.addEventListener('keydown', (e) => {
-    if (e.key.toLowerCase() === 'f') document.documentElement.style.setProperty('--show-id', '1');
+    if (e.key.toLowerCase() === 'f') {
+        document.documentElement.style.setProperty('--show-id', '1');
+    } else if (e.key === "Enter" && document.activeElement?.id === "chat-input") {
+        submitChatMessage();
+    }
 });
 
 window.addEventListener('keyup', (e) => {

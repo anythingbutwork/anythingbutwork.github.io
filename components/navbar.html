@@ -20,6 +20,24 @@
           </ul>
         </div>
       </div>
+      <div class="relative">
+        <button id="chat-button" class="flex items-center justify-center w-[2.25rem] h-[2.25rem] rounded-full cursor-pointer hover:bg-theme transition duration-150 ease-in-out" onclick="toggleChatMenu()">
+          <img class="h-5 w-5 object-contain" src="/assets/icons/chat.png">
+        </button>
+        <div id="chat-menu" class="chat-menu hidden bg-black/50 backdrop-blur-lg flex flex-col">
+          <div class="text-xs uppercase tracking-widest px-2 py-2 font-semibold text-white/50">Global Chat</div>
+          <ul id="chat-messages" class="chat-messages p-2 flex-1 flex flex-col gap-1 overflow-y-auto"></ul>
+          <div class="p-2">
+            <div class="flex gap-3 items-center relative">
+                <div class="relative flex items-center flex-1">
+                    <input class="widelight !bg-lighter/25" type="text" id="chat-input" placeholder="Send a message..." autocomplete="off">
+                    <img class="absolute left-[1em] w-[1.5em] h-[1.5em] pointer-events-none" src="/assets/icons/chat.png">
+                </div>
+                <button id="chat-send" class="suggest !bg-lighter/25" onclick="submitChatMessage(true)"></button>
+            </div>
+          </div>
+        </div>
+      </div>
       <a class="nav-link" href="/">Home</a>
       <a class="nav-link" href="/settings">Settings</a>
     </div>
