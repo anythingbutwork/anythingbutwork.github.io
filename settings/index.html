@@ -19,10 +19,16 @@
   <main class="pt-20 px-4 max-w-7xl mx-auto">
     <div class="card bg-light">
         <h1 class="text-xs opacity-75 mb-1">ACCOUNT USERNAME</h1>
-        <input class="username" type="text" id="username" maxlength="25" placeholder="Enter username..." autocomplete="off">
+        <div class="relative flex items-center">
+            <img class="absolute left-[1em] w-[1.5em] h-[1.5em] pointer-events-none" src="/assets/icons/person.png">
+            <input class="widelight" type="text" id="username" maxlength="25" placeholder="Enter username..." autocomplete="off">
+        </div>
         
         <h1 class="text-xs opacity-75 mt-2 mb-1">ACCOUNT ID</h1>
-        <input class="id" type="text" id="id" maxlength="25" disabled="true" placeholder="Loading..." autocomplete="off">
+        <div class="relative flex items-center">
+            <img class="absolute left-[1em] w-[1.5em] h-[1.5em] opacity-50 pointer-events-none" src="/assets/icons/id.png">
+            <input class="widelight !text-white/50 pointer-events-none" type="text" id="id" maxlength="25" disabled="true" placeholder="Loading..." autocomplete="off">
+        </div>
 
         <h1 class="text-xs opacity-75 mt-2 mb-1">WEBSITE THEME</h1>
         <div id="color-options" class="flex gap-2"></div>
@@ -32,11 +38,12 @@
     </div>
 
     <div class="card bg-light">
-        <h1 class="text-xs opacity-75">SUGGESTIONS</h1>
-        <hr class="divider">
-        <h1 class="leading-none text-2xl font-semibold mb-2">Submit a Suggestion</h1>
+        <h1 class="text-xs opacity-75 mb-1">SUBMIT A SUGGESTION</h1>
         <div class="flex gap-3 items-center relative">
-            <input class="suggestion" type="text" id="suggestion" placeholder="What should be added or changed?" autocomplete="off">
+            <div class="relative flex items-center flex-1">
+                <img class="absolute left-[1em] w-[1.5em] h-[1.5em] pointer-events-none" src="/assets/icons/suggestion.png">
+                <input class="widelight" type="text" id="suggestion" placeholder="What should be added or changed?" autocomplete="off">
+            </div>
             <button id="suggest" class="suggest" onclick="submitSuggestion()"></button>
         </div>
     </div>

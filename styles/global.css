@@ -2,6 +2,7 @@
   --color-theme: "#FFF";
   --color-bg: color-mix(in srgb, var(--color-theme) 15%, #000000);
   --color-accent: color-mix(in srgb, var(--color-theme) 25%, #000000);
+  --color-dark: color-mix(in srgb, var(--color-theme) 30%, #000000);
   --color-light: color-mix(in srgb, var(--color-theme) 35%, #000000);
   --color-lighter: color-mix(in srgb, var(--color-theme) 40%, #000000);
   --color-success: 102 255 102;
@@ -119,7 +120,6 @@ li.dot-li::before {
   position: absolute;
   right: 0;
   top: calc(100% + 10px);
-  background-color: #1a1a1a;
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 14px;
   min-width: 400px;
@@ -151,52 +151,33 @@ li.dot-li::before {
   background: rgba(255, 255, 255, 0.25);
 }
 
-.search {
+input.wide {
   background-color: var(--color-light);
   border-radius: 20px;
-  padding: 10px 40px;
+  padding: 10px 45px;
   width: 100%;
   border: 2px solid transparent;
   color: #fff;
   outline: none;
   transition: all 0.1s ease-in-out;
   box-shadow: 0 4px 6px rgba(0,0,0,0);
-  background-image: url("/assets/icons/search.png");
-  background-repeat: no-repeat;
-  background-position: 1em center;
-  background-size: 1em 1em;
 }
 
-.search:focus {
-  background-color: var(--color-light);
+input.wide:focus {
+  background-color: var(--color-lighter);
   border-color: var(--color-theme, dodgerblue);;
   box-shadow: 0 0 10px var(--color-theme, dodgerblue);;
 }
 
-.search:hover {
+input.wide:hover {
   background-color: var(--color-lighter);
 }
 
-.search::placeholder {
+input.wide::placeholder {
   color: #888;
 }
 
-.id {
-  background-color: var(--color-accent);
-  border-radius: 20px;
-  padding: 10px 45px;
-  width: 100%;
-  border: 2px solid transparent;
-  color: rgba(255, 255, 255, 0.5);
-  outline: none;
-  box-shadow: 0 4px 6px rgba(0,0,0,0);
-  background-image: linear-gradient(rgba(22, 22, 22, 0.5), rgba(22, 22, 22, 0.5)), url("/assets/icons/id.png");
-  background-repeat: no-repeat;
-  background-position: 1em center;
-  background-size: 1.5em 1.5em;
-}
-
-.username {
+input.widelight {
   background-color: var(--color-accent);
   border-radius: 20px;
   padding: 10px 45px;
@@ -206,53 +187,19 @@ li.dot-li::before {
   outline: none;
   transition: all 0.1s ease-in-out;
   box-shadow: 0 4px 6px rgba(0,0,0,0);
-  background-image: url("/assets/icons/person.png");
-  background-repeat: no-repeat;
-  background-position: 1em center;
-  background-size: 1.5em 1.5em;
 }
 
-.username:focus {
-  background-color: var(--color-lighter);
+input.widelight:focus {
+  background-color: var(--color-dark);
   border-color: var(--color-theme, dodgerblue);;
   box-shadow: 0 0 10px var(--color-theme, dodgerblue);;
 }
 
-.username:hover {
-  background-color: var(--color-lighter);
+input.widelight:hover {
+  background-color: var(--color-dark);
 }
 
-.username::placeholder {
-  color: #888;
-}
-
-.suggestion {
-  background-color: var(--color-accent);
-  border-radius: 20px;
-  padding: 10px 45px;
-  width: 100%;
-  border: 2px solid transparent;
-  color: #fff;
-  outline: none;
-  transition: all 0.1s ease-in-out;
-  box-shadow: 0 4px 6px rgba(0,0,0,0);
-  background-image: url("/assets/icons/suggestion.png");
-  background-repeat: no-repeat;
-  background-position: 1em center;
-  background-size: 1.5em 1.5em;
-}
-
-.suggestion:focus {
-  background-color: var(--color-lighter);
-  border-color: var(--color-theme, dodgerblue);;
-  box-shadow: 0 0 10px var(--color-theme, dodgerblue);;
-}
-
-.suggestion:hover {
-  background-color: var(--color-lighter);
-}
-
-.suggestion::placeholder {
+input.widelight::placeholder {
   color: #888;
 }
 
@@ -303,7 +250,6 @@ li.dot-li::before {
   position: absolute;
   right: 0;
   top: calc(100% + 10px);
-  background-color: var(--color-bg);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 14px;
   min-width: 400px;

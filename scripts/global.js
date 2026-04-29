@@ -7,7 +7,9 @@ tailwind.config = {
             colors: {
                 bg: "var(--color-bg)",
                 accent: "var(--color-accent)",
+                dark: "var(--color-dark)",
                 light: "var(--color-light)",
+                lighter: "var(--color-lighter)",
                 success: "rgb(var(--color-success))",
                 fail: "rgb(var(--color-fail))",
                 warning: "rgb(var(--color-warning))",
@@ -439,12 +441,14 @@ function loadTheme() {
     if (currentTheme === "#FFF") {
         document.documentElement.style.setProperty("--color-bg", "#111111");
         document.documentElement.style.setProperty("--color-accent", "#161616");
+        document.documentElement.style.setProperty("--color-dark", "#1A1A1A");
         document.documentElement.style.setProperty("--color-light", "#222222");
         document.documentElement.style.setProperty("--color-lighter", "#262626");
         document.documentElement.style.setProperty("--color-theme", "#1E90FF");
     } else {
         document.documentElement.style.setProperty("--color-bg", `color-mix(in srgb, ${currentTheme} 15%, #000000)`);
         document.documentElement.style.setProperty("--color-accent", `color-mix(in srgb, ${currentTheme} 25%, #000000)`);
+        document.documentElement.style.setProperty("--color-dark", `color-mix(in srgb, ${currentTheme} 30%, #000000)`);
         document.documentElement.style.setProperty("--color-light", `color-mix(in srgb, ${currentTheme} 35%, #000000)`);
         document.documentElement.style.setProperty("--color-lighter", `color-mix(in srgb, ${currentTheme} 40%, #000000)`);
         document.documentElement.style.setProperty('--color-theme', currentTheme);
@@ -718,17 +722,20 @@ if (idInput) {
 
 if (colorOptions) {
     for (const [theme, hex] of Object.entries(THEMES)) {
+        let isCurrent = getTheme() === hex;
+        let isDefault = hex === "#FFF";
+
         const btn = document.createElement("button");
-        btn.className = "w-8 h-8 rounded-full";
-        btn.style.backgroundColor = hex === "#FFF" ? "#FFFFFF00" : hex;
-        btn.style.boxShadow = getTheme() === hex ? "0 0 25px var(--color-theme)" : "0 0 10px transparent";
-        btn.style.opacity = getTheme() === hex ? "1" : "0.5";
-        if (hex === "#FFF") {
-            btn.style.backgroundImage = "url('/assets/icons/reset.png')";
-            btn.style.backgroundRepeat = "no-repeat";
-            btn.style.backgroundPosition = "center";
-            btn.style.backgroundSize = "1.2em";
-        }
+        btn.className = [
+            "w-8 h-8 rounded-full cursor-pointer",
+            "transition-all duration-200",
+            "hover:opacity-100 hover:scale-110",
+            isDefault ? "bg-transparent bg-center bg-no-repeat bg-[length:1.2em]" : "",
+            isCurrent ? "opacity-100 scale-110 shadow-[0_0_25px_var(--color-theme)]" : "opacity-50",
+        ].join(" ");
+
+        if (!isDefault) btn.style.backgroundColor = hex;
+        if (isDefault) btn.style.backgroundImage = "url('/assets/icons/reset.png')";
 
         colorOptions.appendChild(btn);
 
@@ -736,9 +743,13 @@ if (colorOptions) {
             localStorage.setItem("theme", hex);
             document.documentElement.style.setProperty('--color-theme', hex);
             loadTheme();
+
             Array.from(colorOptions.children).forEach(child => {
-                child.style.opacity = child === btn ? "1" : "0.5";
-                child.style.boxShadow = child === btn ? "0 0 25px var(--color-theme)" : "0 0 10px transparent";
+                const active = child === btn;
+                child.classList.toggle("opacity-100", active);
+                child.classList.toggle("scale-110", active);
+                child.classList.toggle("shadow-[0_0_25px_var(--color-theme)]", active);
+                child.classList.toggle("opacity-50", !active);
             });
         });
     }
@@ -746,28 +757,21 @@ if (colorOptions) {
 
 if (disguiseOptions) {
     for (const [name, disguise] of Object.entries(DISGUISES)) {
+        let isCurrent = getDisguise() === name;
+
         const btn = document.createElement("button");
-        btn.className = "flex items-center gap-2 rounded-full px-3 h-8";
-        btn.style.backgroundColor = "#333333";
-        btn.style.boxShadow = getDisguise() === name ? "0 0 10px var(--color-theme)" : "0 0 10px transparent";
-        btn.style.opacity = getDisguise() === name ? "1" : "0.5";
+        btn.className = [
+            "flex items-center gap-2 rounded-full px-3 h-8 bg-accent cursor-pointer",
+            "transition-all duration-200 hover:opacity-100",
+            isCurrent ? "bg-theme opacity-100 shadow-[0_0_10px_var(--color-theme)]" : "opacity-50",
+        ].join(" ");
 
         const icon = document.createElement("span");
-        icon.style.width = "1.2em";
-        icon.style.height = "1.2em";
-        icon.style.backgroundImage = "url('" + disguise.icon + "')";
-        icon.style.backgroundRepeat = "no-repeat";
-        icon.style.backgroundPosition = "center";
-        icon.style.backgroundSize = "contain";
-        icon.style.display = "inline-block";
-        icon.style.flexShrink = "0";
+        icon.className = `w-[1.2em] h-[1.2em] bg-[url('${disguise.icon}')] bg-center bg-no-repeat bg-contain inline-block shrink-0`;
 
         const label = document.createElement("span");
+        label.className = "text-xs font-medium text-white whitespace-nowrap";
         label.textContent = disguise.title;
-        label.style.fontSize = "0.75rem";
-        label.style.fontWeight = "500";
-        label.style.color = "#fff";
-        label.style.whiteSpace = "nowrap";
 
         btn.appendChild(icon);
         btn.appendChild(label);
@@ -777,8 +781,11 @@ if (disguiseOptions) {
             localStorage.setItem("disguise", name);
             loadDisguise();
             Array.from(disguiseOptions.children).forEach(child => {
-                child.style.boxShadow = child === btn ? "0 0 10px var(--color-theme)" : "0 0 10px transparent";
-                child.style.opacity = child === btn ? "1" : "0.5";
+                const active = child === btn;
+                child.classList.toggle("opacity-100", active);
+                child.classList.toggle("shadow-[0_0_10px_var(--color-theme)]", active);
+                child.classList.toggle("opacity-50", !active);
+                child.classList.toggle("bg-theme", active);
             });
         });
     }

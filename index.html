@@ -18,15 +18,13 @@
 
   <main class="py-20 px-4 max-w-7xl mx-auto">
     <div class="card">
-        <h1 class="text-xs opacity-75">v2.7.0 — 4/28/2026 1:40PM</h1>
+        <h1 class="text-xs opacity-75">v2.7.1 — 4/29/2026 9:04AM</h1>
         <hr class="divider">
         <h1 class="leading-none text-2xl font-semibold mb-2">Changelog</h1>
         <ul>
-            <li>Added the ability to change website theme to the settings page</li>
+            <li>Small UI changes</li>
             <li>Added the ability to change website disguise via the settings page</li>
-            <li>Added a Recently Played section to the home page</li>
             <li>Added game-specific playercounts to the home page (only shows indicator if at least 1 playing)</li>
-            <li>Moved suggestions to the settings page to prevent clutter</li>
         </ul>
     </div>
 
@@ -36,12 +34,15 @@
     </div>
 
     <div class="flex gap-3 items-center relative">
-      <input class="search" type="text" id="search" placeholder="Search games..." autocomplete="off">
+        <div class="relative flex items-center flex-1">
+            <img class="absolute left-[1em] w-[1.5em] h-[1.5em] pointer-events-none" src="/assets/icons/search.png">
+            <input class="wide" type="text" id="search" placeholder="Search games..." autocomplete="off">
+        </div>
       
       <div class="relative">
           <button id="filter" class="filter" onclick="toggleFilterMenu()"></button>
 
-          <div id="filter-menu" class="filter-menu hidden">
+          <div id="filter-menu" class="filter-menu hidden  bg-black/50 backdrop-blur-lg">
             <div class="text-xs uppercase tracking-widest px-2 py-2 font-semibold text-white/50">Filters</div>
             <div class="flex flex-col gap-1">
                 <label class="filter-option">
