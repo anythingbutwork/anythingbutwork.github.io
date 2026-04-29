@@ -5,15 +5,15 @@ tailwind.config = {
                 sans: ["Inter", "system-ui", "sans-serif"]
             },
             colors: {
-                bg: "var(--color-bg)",
-                accent: "var(--color-accent)",
-                dark: "var(--color-dark)",
-                light: "var(--color-light)",
-                lighter: "var(--color-lighter)",
-                success: "rgb(var(--color-success))",
-                fail: "rgb(var(--color-fail))",
-                warning: "rgb(var(--color-warning))",
-                theme: "var(--color-theme)" 
+                bg:      "rgb(var(--color-bg) / <alpha-value>)",
+                accent:  "rgb(var(--color-accent) / <alpha-value>)",
+                dark:    "rgb(var(--color-dark) / <alpha-value>)",
+                light:   "rgb(var(--color-light) / <alpha-value>)",
+                lighter: "rgb(var(--color-lighter) / <alpha-value>)",
+                success: "rgb(var(--color-success) / <alpha-value>)",
+                fail:    "rgb(var(--color-fail) / <alpha-value>)",
+                warning: "rgb(var(--color-warning) / <alpha-value>)",
+                theme:   "rgb(var(--color-theme) / <alpha-value>)",
             }
         }
     }
@@ -436,23 +436,27 @@ function getTheme() {
     return theme;
 }
 
+function hexToChannels(hex) {
+    const n = parseInt(hex.replace("#", ""), 16);
+    return `${(n >> 16) & 255} ${(n >> 8) & 255} ${n & 255}`;
+}
+
+function darken(hex, t) {
+    const n = parseInt(hex.replace("#", ""), 16);
+    return `${Math.round(((n >> 16) & 255) * t)} ${Math.round(((n >> 8) & 255) * t)} ${Math.round((n & 255) * t)}`;
+}
+
 function loadTheme() {
-    let currentTheme = getTheme();
-    if (currentTheme === "#FFF") {
-        document.documentElement.style.setProperty("--color-bg", "#111111");
-        document.documentElement.style.setProperty("--color-accent", "#161616");
-        document.documentElement.style.setProperty("--color-dark", "#1A1A1A");
-        document.documentElement.style.setProperty("--color-light", "#222222");
-        document.documentElement.style.setProperty("--color-lighter", "#262626");
-        document.documentElement.style.setProperty("--color-theme", "#1E90FF");
-    } else {
-        document.documentElement.style.setProperty("--color-bg", `color-mix(in srgb, ${currentTheme} 15%, #000000)`);
-        document.documentElement.style.setProperty("--color-accent", `color-mix(in srgb, ${currentTheme} 25%, #000000)`);
-        document.documentElement.style.setProperty("--color-dark", `color-mix(in srgb, ${currentTheme} 30%, #000000)`);
-        document.documentElement.style.setProperty("--color-light", `color-mix(in srgb, ${currentTheme} 35%, #000000)`);
-        document.documentElement.style.setProperty("--color-lighter", `color-mix(in srgb, ${currentTheme} 40%, #000000)`);
-        document.documentElement.style.setProperty('--color-theme', currentTheme);
-    }
+    const theme = getTheme();
+    const base = theme === "#FFF" ? "#1E90FF" : theme;
+    const set = (k, v) => document.documentElement.style.setProperty(k, v);
+
+    set("--color-theme",   hexToChannels(base));
+    set("--color-bg",      theme === "#FFF" ? "17 17 17"  : darken(base, 0.15));
+    set("--color-accent",  theme === "#FFF" ? "22 22 22"  : darken(base, 0.25));
+    set("--color-dark",    theme === "#FFF" ? "26 26 26"  : darken(base, 0.30));
+    set("--color-light",   theme === "#FFF" ? "34 34 34"  : darken(base, 0.35));
+    set("--color-lighter", theme === "#FFF" ? "38 38 38"  : darken(base, 0.40));
 }
 
 loadTheme();
