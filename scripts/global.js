@@ -862,7 +862,7 @@ function renderChatMessage(message, welcome) {
         header.className = `flex items-center ${isSelf ? "justify-end" : ""} gap-1 mt-3 px-1`;
         header.innerHTML = `
             ${isSelf ? `<span class="text-xs text-white/50">${time}</span>` : ""}
-            <button onclick='openUserModal(${JSON.stringify({player: message.player, status: "moderating", on: "home page"}).replace(/'/g, "&apos;")})' class="text-sm text-${tag ? tag.color : "white"} font-bold">${message.player.username}</button>
+            <button onclick='openUserModal(${JSON.stringify({player: message.player, status: "home", on: "home page"}).replace(/'/g, "&apos;")})' class="text-sm text-${tag ? tag.color : "white"} font-bold">${message.player.username}</button>
             ${tag ? `
                 <span class="text-xs bg-${tag.tagColor || tag.color} text-white rounded-lg px-1 py-0.5 ml-1">${tag.tag}</span>
             ` : ""}
