@@ -5616,6 +5616,15 @@
                 "skill",
                 "driving"
             ]
+        },
+        {
+            "id": 2315,
+            "name": "Granny",
+            "path": "/extras/Granny",
+            "tags": [
+                "stratgy",
+                "adventure"
+            ]
         }
     ]
 }
