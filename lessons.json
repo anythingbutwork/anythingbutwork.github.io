@@ -5598,6 +5598,24 @@
                 "casual",
                 "strategy"
             ]
+        },
+        {
+            "id": 2313,
+            "name": "Vex X3M",
+            "path": "/extras/VexX3M",
+            "tags": [
+                "skill",
+                "driving"
+            ]
+        },
+        {
+            "id": 2314,
+            "name": "Vex X3M 2",
+            "path": "/extras/VexX3M2",
+            "tags": [
+                "skill",
+                "driving"
+            ]
         }
     ]
 }

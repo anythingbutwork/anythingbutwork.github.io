@@ -829,19 +829,21 @@ function updateChatTyping(typing) {
     typing = typing.filter(u => u.id !== session.id);
 
     if (typing.length === 0) {
-        el.innerHTML = "";
+        el.style.opacity = "0";
         return;
     }
 
     if (typing.length === 1) {
-        el.innerHTML = `<span class="text-white">${typing[0].username}</span> is typing...`;
+        el.innerHTML = `<img class="h-5 w-5 object-contain" src="/assets/icons/typing.svg"></img><span class="text-white">${typing[0].username}</span> is typing...`;
     } else if (typing.length === 2) {
-        el.innerHTML = `<span class="text-white">${typing[0].username}</span> and <span class="text-white">${typing[1].username}</span> are typing...`;
+        el.innerHTML = `<img class="h-5 w-5 object-contain" src="/assets/icons/typing.svg"></img> <span class="text-white">${typing[0].username}</span> and <span class="text-white">${typing[1].username}</span> are typing...`;
     } else if (typing.length === 3) {
-        el.innerHTML = `<span class="text-white">${typing[0].username}</span>, <span class="text-white">${typing[1].username}</span> and <span class="text-white">${typing[2].username}</span> are typing...`;
+        el.innerHTML = `<img class="h-5 w-5 object-contain" src="/assets/icons/typing.svg"></img> <span class="text-white">${typing[0].username}</span>, <span class="text-white">${typing[1].username}</span> and <span class="text-white">${typing[2].username}</span> are typing...`;
     } else {
-        el.innerHTML = `<span class="text-white">${typing[0].username}</span> and ${typing.length - 1} others are typing...`;
+        el.innerHTML = `<img class="h-5 w-5 object-contain" src="/assets/icons/typing.svg"></img> <span class="text-white">${typing[0].username}</span> and ${typing.length - 1} others are typing...`;
     }
+    
+    el.style.opacity = "1";
 }
 
 function renderChatMessage(message, welcome) {
