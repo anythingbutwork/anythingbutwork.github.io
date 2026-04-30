@@ -887,7 +887,8 @@ function renderChatMessage(message, welcome) {
     chatMessagesContainer.appendChild(el);
     
     const distFromBottom = chatMessagesContainer.scrollHeight - chatMessagesContainer.scrollTop - chatMessagesContainer.clientHeight;
-    if (distFromBottom <= 500) {
+    console.log(chatMessagesContainer.scrollHeight + " : " + chatMessagesContainer.scrollTop + " : " + chatMessagesContainer.clientHeight + " : " + distFromBottom)
+    if (distFromBottom <= 500 || message.player.id === session.id) {
         chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
     }
     updateJumpButton();
