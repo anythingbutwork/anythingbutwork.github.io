@@ -115,6 +115,8 @@ function wsConnect() {
             updatePlayerCounts();
         } else if (data.action === "chat") {
             renderChatMessage(data);
+        } else if (data.action === "typing") {
+            updateChatTyping(data.typing);
         } else if (data.action === "chatHistory") {
             chatMessagesContainer.innerHTML = "";
             data.messages.forEach(msg => renderChatMessage(msg, true));
@@ -471,6 +473,9 @@ function submitSuggestion() {
 }
 
 function submitChatMessage(wasButton) {
+    clearTimeout(typingTimeout);
+    wsSend({ action: "stop_typing", player: session });
+
     const input = document.getElementById("chat-input");
     const button = document.getElementById("chat-send");
     if (!input) return;
@@ -791,6 +796,7 @@ fetch("/components/navbar.html")
 
     
 const chatMenu = document.getElementById("chat-menu");
+const chatInput = document.getElementById("chat-input");
 const chatMessagesContainer = document.getElementById("chat-messages");
 
 function setUnreadDot(visible) {
@@ -813,6 +819,28 @@ const chatTags = {
     "System": {
         color: "theme",
         tag: "SYSTEM"
+    }
+}
+
+function updateChatTyping(typing) {
+    const el = document.getElementById("chat-typing");
+    if (!el) return;
+
+    typing = typing.filter(u => u.id !== session.id);
+
+    if (typing.length === 0) {
+        el.innerHTML = "";
+        return;
+    }
+
+    if (typing.length === 1) {
+        el.innerHTML = `<span class="text-white">${typing[0].username}</span> is typing...`;
+    } else if (typing.length === 2) {
+        el.innerHTML = `<span class="text-white">${typing[0].username}</span> and <span class="text-white">${typing[1].username}</span> are typing...`;
+    } else if (typing.length === 3) {
+        el.innerHTML = `<span class="text-white">${typing[0].username}</span>, <span class="text-white">${typing[1].username}</span> and <span class="text-white">${typing[2].username}</span> are typing...`;
+    } else {
+        el.innerHTML = `<span class="text-white">${typing[0].username}</span> and ${typing.length - 1} others are typing...`;
     }
 }
 
@@ -1092,6 +1120,17 @@ window.addEventListener('keydown', (e) => {
     if (e.key === "Enter" && document.activeElement?.id === "chat-input") {
         submitChatMessage();
     }
+});
+
+let typingTimeout = null;
+
+chatInput.addEventListener("input", () => {
+    wsSend({ action: "start_typing", player: session });
+
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(() => {
+        wsSend({ action: "stop_typing", player: session });
+    }, 1500);
 });
 
 document.addEventListener("visibilitychange", () => {
