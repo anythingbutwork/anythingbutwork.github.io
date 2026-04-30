@@ -797,6 +797,7 @@ fetch("/components/navbar.html")
     
 const chatMenu = document.getElementById("chat-menu");
 const chatInput = document.getElementById("chat-input");
+const chatJump = document.getElementById("chat-jump");
 const chatMessagesContainer = document.getElementById("chat-messages");
 
 function setUnreadDot(visible) {
@@ -846,6 +847,14 @@ function updateChatTyping(typing) {
     el.style.opacity = "1";
 }
 
+function updateJumpButton() {
+    const distFromBottom = chatMessagesContainer.scrollHeight - chatMessagesContainer.scrollTop - chatMessagesContainer.clientHeight;
+    const show = distFromBottom > 500;
+    chatJump.style.opacity = show ? "1" : "0";
+    chatJump.style.bottom = show ? "6rem" : "5rem";
+    chatJump.style.pointerEvents = show ? "auto" : "none";
+}
+
 function renderChatMessage(message, welcome) {
     const isSelf = message.player.id === session.id;
 
@@ -876,13 +885,15 @@ function renderChatMessage(message, welcome) {
     el.innerHTML = `<span class="text-sm text-white">${message.content}</span>`;
 
     chatMessagesContainer.appendChild(el);
-    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+    updateJumpButton();
     
     if (!welcome) {
         const menuOpen = chatMenu.style.display === "flex";
         if (!menuOpen && !isSelf) setUnreadDot(true);
     }
 }
+
+chatMessagesContainer.addEventListener("scroll", updateJumpButton);
 
 function openUserModal(u) {
     document.getElementById("user-modal-overlay")?.remove();
