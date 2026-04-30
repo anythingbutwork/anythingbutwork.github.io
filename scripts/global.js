@@ -116,6 +116,7 @@ function wsConnect() {
         } else if (data.action === "chat") {
             renderChatMessage(data);
         } else if (data.action === "chatHistory") {
+            chatMessagesContainer.innerHTML = "";
             data.messages.forEach(msg => renderChatMessage(msg, true));
             renderChatMessage({
                 action: "chat",
