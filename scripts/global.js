@@ -824,27 +824,28 @@ const chatTags = {
 }
 
 function updateChatTyping(typing) {
-    const el = document.getElementById("chat-typing");
-    if (!el) return;
+    const container = document.getElementById("chat-typing-container");
+    const users = document.getElementById("chat-typing-users");
+    if (!container || !users) return;
 
     typing = typing.filter(u => u.id !== session.id);
 
     if (typing.length === 0) {
-        el.style.opacity = "0";
+        container.style.opacity = "0";
         return;
     }
 
     if (typing.length === 1) {
-        el.innerHTML = `<img class="h-5 w-5 object-contain" src="/assets/icons/typing.svg"></img><span class="text-white">${typing[0].username}</span> is typing...`;
+        users.innerHTML = `<span class="text-white">${typing[0].username}</span> is typing...`;
     } else if (typing.length === 2) {
-        el.innerHTML = `<img class="h-5 w-5 object-contain" src="/assets/icons/typing.svg"></img> <span class="text-white">${typing[0].username}</span> and <span class="text-white">${typing[1].username}</span> are typing...`;
+        users.innerHTML = `<span class="text-white">${typing[0].username}</span> and <span class="text-white">${typing[1].username}</span> are typing...`;
     } else if (typing.length === 3) {
-        el.innerHTML = `<img class="h-5 w-5 object-contain" src="/assets/icons/typing.svg"></img> <span class="text-white">${typing[0].username}</span>, <span class="text-white">${typing[1].username}</span> and <span class="text-white">${typing[2].username}</span> are typing...`;
+        users.innerHTML = `<span class="text-white">${typing[0].username}</span>, <span class="text-white">${typing[1].username}</span> and <span class="text-white">${typing[2].username}</span> are typing...`;
     } else {
-        el.innerHTML = `<img class="h-5 w-5 object-contain" src="/assets/icons/typing.svg"></img> <span class="text-white">${typing[0].username}</span> and ${typing.length - 1} others are typing...`;
+        users.innerHTML = `<span class="text-white">${typing[0].username}</span> and ${typing.length - 1} others are typing...`;
     }
     
-    el.style.opacity = "1";
+    container.style.opacity = "1";
 }
 
 function updateJumpButton() {
@@ -887,7 +888,6 @@ function renderChatMessage(message, welcome) {
     chatMessagesContainer.appendChild(el);
     
     const distFromBottom = chatMessagesContainer.scrollHeight - chatMessagesContainer.scrollTop - chatMessagesContainer.clientHeight;
-    console.log(chatMessagesContainer.scrollHeight + " : " + chatMessagesContainer.scrollTop + " : " + chatMessagesContainer.clientHeight + " : " + distFromBottom)
     if (distFromBottom <= 500 || message.player.id === session.id) {
         chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
     }

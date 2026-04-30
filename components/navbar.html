@@ -38,9 +38,11 @@
             </svg>
             Jump to bottom
           </button>
-          <div id="chat-typing" class="flex items-center gap-1 text-xs text-white/75 px-3 pb-1 h-4 transition duration-250 ease-in-out opacity-0">
-            <img class="h-5 w-5 object-contain" src="/assets/icons/typing.svg"></img>
-            <span class="text-white">Someone</span> is typing...
+          <div id="chat-typing-container" class="flex items-center gap-1 text-xs text-white/75 px-3 pb-1 h-4 transition duration-250 ease-in-out opacity-0">
+            <img id="chat-typing-icon" class="h-5 w-5 object-contain" src="/assets/icons/typing.svg"></img>
+            <span id="chat-typing-users">
+              <span class="text-white">Someone</span> is typing...
+            </span>
           </div>
           <div class="p-2">
             <div class="flex gap-3 items-center relative">
