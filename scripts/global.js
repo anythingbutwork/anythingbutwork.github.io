@@ -134,6 +134,20 @@ function wsConnect() {
                     <p class="text-sm text-white/50 -mt-2">${data.reason || "No reason provided."}</p>
                 </div>
             `;
+        } else if (data.action === "unban") {
+            window.location.reload();
+        } else if (data.action === "rename") {
+            session.username = data.username;
+            localStorage.setItem("session", JSON.stringify(session));
+            renderChatMessage({
+                action: "chat",
+                player: {
+                    username: "System",
+                    id: "System"
+                },
+                content: "⚠️ Your username has been moderated.",
+                timestamp: Math.floor(Date.now() / 1000)
+            }, true);
         }
     });
 
@@ -801,7 +815,7 @@ function renderChatMessage(message, welcome) {
         header.className = `flex items-center ${isSelf ? "justify-end" : ""} gap-1 mt-3 px-1`;
         header.innerHTML = `
             ${isSelf ? `<span class="text-xs text-white/50">${time}</span>` : ""}
-            <button onclick = "navigator.clipboard.writeText('${message.player.id}')" class="text-sm text-${tag ? tag.color : "white"} font-bold">${message.player.username}</button>
+            <button onclick='openUserModal(${JSON.stringify({player: message.player, status: "moderating", on: "home page"}).replace(/'/g, "&apos;")})' class="text-sm text-${tag ? tag.color : "white"} font-bold">${message.player.username}</button>
             ${tag ? `
                 <span class="text-xs bg-${tag.tagColor || tag.color} text-white rounded-lg px-1 py-0.5 ml-1">${tag.tag}</span>
             ` : ""}
@@ -830,8 +844,8 @@ function openUserModal(u) {
     overlay.id = "user-modal-overlay";
     overlay.className = "fixed inset-0 z-[999999] flex items-center justify-center bg-black/55 backdrop-blur-md opacity-0 transition-opacity duration-150 ease-out";
 
-    const dotColor = { playing: '#66FF66', out: '#E0AA17', home: '#1E90FF', offline: '#FF6666' }[u.status] ?? '#AAAAAA';
-    const statusLabel = { playing: 'Playing', out: 'Away', home: 'Browsing', offline: 'Offline' }[u.status] ?? u.status;
+    const dotColor = { playing: '#66FF66', out: '#E0AA17', home: '#1E90FF', moderating: '#1E90FF', offline: '#FF6666' }[u.status] ?? '#AAAAAA';
+    const statusLabel = { playing: 'Playing', out: 'Away', home: 'Browsing', moderating: "Moderating", offline: 'Offline' }[u.status] ?? u.status;
     const initial = (u.player.username || u.player.id)?.[0]?.toUpperCase() ?? '?';
 
     overlay.innerHTML = `
