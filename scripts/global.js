@@ -885,6 +885,11 @@ function renderChatMessage(message, welcome) {
     el.innerHTML = `<span class="text-sm text-white">${message.content}</span>`;
 
     chatMessagesContainer.appendChild(el);
+    
+    const distFromBottom = chatMessagesContainer.scrollHeight - chatMessagesContainer.scrollTop - chatMessagesContainer.clientHeight;
+    if (distFromBottom <= 500) {
+        chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+    }
     updateJumpButton();
     
     if (!welcome) {
