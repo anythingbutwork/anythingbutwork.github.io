@@ -456,22 +456,8 @@ function submitChatMessage(wasButton) {
     const button = document.getElementById("chat-send");
     if (!input) return;
 
-    function result(color) {
-        if (!wasButton) return;
-        input.style.borderColor = color;
-        input.style.boxShadow = `0 0 10px ${color}`;
-        button.style.borderColor = color;
-        button.style.boxShadow = `0 0 10px ${color}`;
-        return setTimeout(() => {
-            input.style.borderColor = "";
-            input.style.boxShadow = "";
-            button.style.borderColor = "";
-            button.style.boxShadow = "";
-        }, 500);
-    }
-
     const message = input.value.trim();
-    if (message === "") return result("#FF6666");
+    if (message === "") return;
 
     sendChatMessage(message);
     input.value = "";
