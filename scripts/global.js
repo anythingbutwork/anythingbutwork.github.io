@@ -183,28 +183,25 @@ function renderOnline(data) {
                         offline: '#FF6666',
                     }[u.status] ?? '#AAAAAA';
 
-                    return `
-                        <a href="${u.on === "home page" || u.on === "editing settings" ? "/" : "/lesson/?id=" + (u.on.match(/#(\d+)/)?.[1] || "")}" 
-                        class="group flex items-center gap-2 px-2 py-2 rounded-lg text-sm transition-all duration-150 ease-in-out ${u.player.id === session.id ? `bg-[${dotColor}]/25 hover:bg-[${dotColor}]/50` : "hover:bg-white/5"}">
+                    return ` <button onclick='openUserModal(${JSON.stringify(u).replace(/'/g, "&apos;")})' class="group flex items-center gap-2 px-2 py-2 w-full rounded-lg text-sm transition-all duration-150 ease-in-out ${u.player.id === session.id ? `hover:bg-white/10` : "hover:bg-white/5"}" ${u.player.id === session.id ? `style="background-color: ${dotColor}40;"` : ""}>
+                    <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background-color: ${dotColor}"></span>
+                    
+                    <div class="flex flex-col text-left flex-1 min-w-0">
+                        <span class="leading-tight truncate">
+                            ${u.player.username || u.player.id} 
+                            ${u.player.id === session.id ? '<span class="opacity-50 text-[10px] font-medium">(you)</span>' : ''}
+                        </span>
                         
-                        <span class="w-1.5 h-1.5 rounded-full bg-[${dotColor}] shrink-0"></span>
-                        
-                        <div class="flex flex-col justify-center">
-                            <span class="leading-none">
-                                ${u.player.username || u.player.id} 
-                                ${u.player.id === session.id ? '<span class="opacity-50 text-xs">(you)</span>' : ''}
+                        <div class="overflow-hidden transition-all duration-200 ease-in-out max-h-0 opacity-0 group-hover:[max-height:calc(var(--show-id)*20px)] group-hover:[opacity:calc(var(--show-id)*0.5)] group-hover:[margin-top:calc(var(--show-id)*4px)]">
+                            <span class="text-[10px] block truncate font-mono">
+                                ${u.player.id}
                             </span>
-                            
-                            <div class="overflow-hidden transition-all duration-200 ease-in-out max-h-0 opacity-0 group-hover:[max-height:calc(var(--show-id)*20px)] group-hover:[opacity:calc(var(--show-id)*0.5)] group-hover:[margin-top:calc(var(--show-id)*4px)]">
-                                <span class="text-[10px] block mt-0">
-                                    ${u.player.id}
-                                </span>
-                            </div>
                         </div>
+                    </div>
 
-                        ${u.on ? `<span class="ml-auto text-xs opacity-40 pl-4">${u.status === "out" || u.status === "offline" ? "away, " : ""} ${u.on}</span>` : ""}
-                        </a>
-                    `;
+                    ${u.on ? `<span class="ml-auto text-xs opacity-40 pl-4 whitespace-nowrap">${u.status === "out" || u.status === "offline" ? "away, " : ""}${u.on}</span>` : ""}
+                    </button>
+                `;
                 }).join("");
         }
     }
@@ -826,6 +823,82 @@ function renderChatMessage(message, welcome) {
     }
 }
 
+function openUserModal(u) {
+    document.getElementById("user-modal-overlay")?.remove();
+
+    const overlay = document.createElement("div");
+    overlay.id = "user-modal-overlay";
+    overlay.className = "fixed inset-0 z-[999999] flex items-center justify-center bg-black/55 backdrop-blur-md opacity-0 transition-opacity duration-150 ease-out";
+
+    const dotColor = { playing: '#66FF66', out: '#E0AA17', home: '#1E90FF', offline: '#FF6666' }[u.status] ?? '#AAAAAA';
+    const statusLabel = { playing: 'Playing', out: 'Away', home: 'Browsing', offline: 'Offline' }[u.status] ?? u.status;
+    const initial = (u.player.username || u.player.id)?.[0]?.toUpperCase() ?? '?';
+
+    overlay.innerHTML = `
+        <div class="bg-dark/25 backdrop-blur-lg border border-white/10 rounded-[20px] w-[450px] overflow-hidden font-sans shadow-2xl transform scale-95 translate-y-2 transition-all duration-200 ease-out">
+            <div class="p-6 pb-5 border-b border-white/10">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div style="background: ${dotColor}22; border-color: ${dotColor}66; color: ${dotColor};" 
+                             class="w-11 h-11 rounded-full flex-shrink-0 border-[1.5px] flex items-center justify-center text-base font-medium">
+                            ${initial}
+                        </div>
+                        <div>
+                            <div class="text-[17px] font-medium text-white leading-none">
+                                ${u.player.username || u.player.id}
+                            </div>
+                            <button id="modal-user-id" class="text-[11px] text-white/30 font-mono tracking-tight">
+                                ${u.player.id}
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <span style="background: ${dotColor}1e; color: ${dotColor}; border-color: ${dotColor}4d;"
+                          class="text-[11px] font-medium px-2.5 py-1 rounded-full border whitespace-nowrap mt-0.5">
+                        ${statusLabel}
+                    </span>
+                </div>
+
+                ${u.on ? `
+                <div class="flex items-center justify-between bg-white/5 rounded-xl px-3 py-2 border border-white/5">
+                    <div class="flex items-center gap-2">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="text-white/30" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                        <span class="text-xs text-white/40 font-medium">Currently on</span>
+                        <span class="text-xs text-white/70 ml-0.5 font-semibold">${u.on}</span>
+                    </div>
+                    
+                    <a href="${u.on === "home page" || u.on === "editing settings" ? "/" : "/lesson/?id=" + (u.on.match(/#(\d+)/)?.[1] || "")}" 
+                    class="p-1 hover:bg-white/10 rounded-md transition-colors group">
+                        <img src="/assets/icons/external.png" class="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 transition-opacity" alt="Go">
+                    </a>
+                </div>` : ""}
+            </div>
+        </div>
+    `;
+
+    overlay.querySelector("#modal-user-id").addEventListener("click", function() {
+        navigator.clipboard.writeText(u.player.id);
+    });
+
+    overlay.addEventListener("mousedown", (e) => { if (e.target === overlay) overlay.remove(); });
+    
+    document.addEventListener("keydown", function esc(e) {
+        if (e.key === "Escape") { overlay.remove(); document.removeEventListener("keydown", esc); }
+    }, { once: true });
+
+    document.body.appendChild(overlay);
+    const card = overlay.querySelector("div");
+
+    requestAnimationFrame(() => {
+        overlay.classList.replace("opacity-0", "opacity-100");
+        card.classList.replace("scale-95", "scale-100");
+        card.classList.replace("translate-y-2", "translate-y-0");
+    });
+}
+
 fetch("/lessons.json")
     .then(res => res.json())
     .then(data => {
@@ -985,15 +1058,9 @@ window.addEventListener("beforeunload", () => leave);
 window.addEventListener("pagehide", () => leave);
 
 window.addEventListener('keydown', (e) => {
-    if (e.key.toLowerCase() === 'f') {
-        document.documentElement.style.setProperty('--show-id', '1');
-    } else if (e.key === "Enter" && document.activeElement?.id === "chat-input") {
+    if (e.key === "Enter" && document.activeElement?.id === "chat-input") {
         submitChatMessage();
     }
-});
-
-window.addEventListener('keyup', (e) => {
-    if (e.key.toLowerCase() === 'f') document.documentElement.style.setProperty('--show-id', '0');
 });
 
 document.addEventListener("visibilitychange", () => {
