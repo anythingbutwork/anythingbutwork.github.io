@@ -1,6 +1,0 @@
-- Theme selection
-- Hide key
-- New games
-    - Granny
-    - Vexx
-- Fix blumgi soccer

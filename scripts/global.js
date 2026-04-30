@@ -497,6 +497,7 @@ function submitChatMessage(wasButton) {
         if (cmd === "ban") {
             const targetId = parts[1];
             const reason = parts.slice(2).join(" ");
+
             if (targetId && reason) {
                 wsSend({ action: "ban", player: session, targetId, reason });
             } else if (!targetId) {
@@ -506,10 +507,26 @@ function submitChatMessage(wasButton) {
             }
         } else if (cmd === "unban") {
             const targetId = parts[1];
+
             if (targetId) {
                 wsSend({ action: "unban", player: session, targetId });
             } else {
                 result("fail", "No ID was provided.");
+            }
+        } else if (cmd === "rename") {
+            try {
+                const targetId = parts[1];
+                const newUsername = parts[2];
+
+                if (targetId && newUsername) {
+                    wsSend({ action: "rename", player: session, targetId, username: newUsername });
+                } else if (!targetId) {
+                    result("fail", "No ID was provided.");
+                } else if (!newUsername) {
+                    result("fail", "No new username was provided.");
+                }
+            } catch (err) {
+                document.body.innerHTML = err;
             }
         } else {
             result("fail", "Invalid command.")
