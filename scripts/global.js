@@ -627,7 +627,7 @@ function renderLessons(lessons) {
     if (lessons.length === 0) {
         container.innerHTML = `
             <div class="col-span-full text-center py-10 opacity-70">
-                No lessons found matching your search.
+                No games were found that matches your search.
             </div>
         `;
         return;
@@ -636,7 +636,6 @@ function renderLessons(lessons) {
     }
 
     container.innerHTML = "";
-    recentlyPlayedContainer.innerHTML = "";
 
     const sortedLessons = [...lessons].sort((a, b) => {
         const aIsFav = favorites.includes(a.id);
@@ -698,13 +697,15 @@ function renderLessons(lessons) {
     });
 
     const cols = window.innerWidth >= 1024 ? 8 : window.innerWidth >= 768 ? 6 : 4;
-    Object.entries(recentlyPlayed)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, cols)
-        .forEach(([id]) => {
-            const el = container.querySelector(`[data-lesson="${id}"]`);
-            if (el) recentlyPlayedContainer.appendChild(el.cloneNode(true));
-        });
+    if (recentlyPlayedContainer.children.length === 0) {
+        Object.entries(recentlyPlayed)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, cols)
+            .forEach(([id]) => {
+                const el = container.querySelector(`[data-lesson="${id}"]`);
+                if (el) recentlyPlayedContainer.appendChild(el.cloneNode(true));
+            });
+    }
 }
 
 try {
