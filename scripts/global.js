@@ -92,7 +92,6 @@ let online = [];
 let version;
 let page;
 
-
 let ws;
 let wsReady = false;
 const wsQueue = [];
@@ -107,6 +106,7 @@ function wsConnect() {
 
     ws.addEventListener("message", (event) => {
         let data;
+        
         try { data = JSON.parse(event.data); } catch { return; }
 
         if (data.action === "online") {
@@ -126,6 +126,13 @@ function wsConnect() {
                 content: "Welcome to the Global Chat! All messages are automatically filtered. Attempts to bypass will result in a ban.",
                 timestamp: Math.floor(Date.now() / 1000)
             }, true);
+        } else if (data.action === "ban") {
+            document.body.innerHTML = `
+                <div class="fixed inset-0 flex flex-col items-center justify-center bg-black gap-2">
+                    <h1 class="text-3xl font-bold text-red-500">You are banned from accessing the website.</h1>
+                    <p class="text-sm text-white/50 -mt-2">${data.reason || "No reason provided."}</p>
+                </div>
+            `;
         }
     });
 
@@ -459,9 +466,49 @@ function submitChatMessage(wasButton) {
     const message = input.value.trim();
     if (message === "") return;
 
+    if (message.startsWith("!")) {
+        const parts = message.slice(1).split(" ");
+        const cmd = parts[0].toLowerCase();
+
+        function result(type, content) {
+            return renderChatMessage({
+                action: "chat",
+                player: {
+                    username: "System",
+                    id: "System"
+                },
+                content: (type === "success" ? "✅" : "❌") + " " + content,
+                timestamp: Math.floor(Date.now() / 1000)
+            });
+        }
+
+        if (cmd === "ban") {
+            const targetId = parts[1];
+            const reason = parts.slice(2).join(" ");
+            if (targetId && reason) {
+                wsSend({ action: "ban", player: session, targetId, reason });
+            } else if (!targetId) {
+                result("fail", "No ID was provided.");
+            } else if (!reason) {
+                result("fail", "No reason was provided.");
+            }
+        } else if (cmd === "unban") {
+            const targetId = parts[1];
+            if (targetId) {
+                wsSend({ action: "unban", player: session, targetId });
+            } else {
+                result("fail", "No ID was provided.");
+            }
+        } else {
+            result("fail", "Invalid command.")
+        }
+
+        input.value = "";
+        return;
+    }
+
     sendChatMessage(message);
     input.value = "";
-    return;
 }
 
 function injectNavbar(html) {
@@ -756,7 +803,7 @@ function renderChatMessage(message, welcome) {
         header.className = `flex items-center ${isSelf ? "justify-end" : ""} gap-1 mt-3 px-1`;
         header.innerHTML = `
             ${isSelf ? `<span class="text-xs text-white/50">${time}</span>` : ""}
-            <span class="text-sm text-${tag ? tag.color : "white"} font-bold">${message.player.username}</span>
+            <button onclick = "navigator.clipboard.writeText('${message.player.id}')" class="text-sm text-${tag ? tag.color : "white"} font-bold">${message.player.username}</button>
             ${tag ? `
                 <span class="text-xs bg-${tag.tagColor || tag.color} text-white rounded-lg px-1 py-0.5 ml-1">${tag.tag}</span>
             ` : ""}
@@ -766,7 +813,7 @@ function renderChatMessage(message, welcome) {
     }
 
     const el = document.createElement("li");
-    el.className = `${isSelf ? "bg-theme self-end ml-8" : "bg-lighter/75 mr-8"} rounded-xl px-4 py-2 break-words min-w-0 max-w-full`;
+    el.className = `${isSelf ? "bg-theme self-end ml-8" : "bg-lighter/75 self-start"} rounded-xl px-4 py-2 break-words min-w-0 max-w-full`;
     el.innerHTML = `<span class="text-sm text-white">${message.content}</span>`;
 
     chatMessagesContainer.appendChild(el);
