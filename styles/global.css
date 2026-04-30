@@ -69,7 +69,7 @@ li.dot-li::before {
 }
 
 .nav-link:hover {
-    background-color: var(--color-theme, dodgerblue);
+    background-color: rgb(var(--color-theme));
 }
 
 .card {
@@ -382,8 +382,8 @@ input.widelight::placeholder {
 }
 
 .tag-checkbox:checked+.checkbox-box {
-  background-color: var(--color-theme, dodgerblue);
-  border-color: var(--color-theme, dodgerblue);
+  background-color: rgb(var(--color-theme));
+  border-color: rgb(var(--color-theme));
 }
 
 .tag-checkbox:checked + .checkbox-box svg {

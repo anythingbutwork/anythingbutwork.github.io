@@ -27,7 +27,7 @@ const THEMES = {
     blue: "#1E90FF",
     pink: "#FF66FF",
     purple: "#C300FF",
-    dark: "#444",
+    dark: "#444444",
     light: "#B8B8B8",
     default: "#FFF"
 }
@@ -116,16 +116,16 @@ function wsConnect() {
         } else if (data.action === "chat") {
             renderChatMessage(data);
         } else if (data.action === "chatHistory") {
-            data.messages.forEach(msg => renderChatMessage(msg));
+            data.messages.forEach(msg => renderChatMessage(msg, true));
             renderChatMessage({
                 action: "chat",
                 player: {
                     username: "System",
                     id: "System"
                 },
-                content: "Welcome to the Global Chat! All messages are automatically moderated.",
+                content: "Welcome to the Global Chat! All messages are automatically filtered. Attempts to bypass will result in a ban.",
                 timestamp: Math.floor(Date.now() / 1000)
-            });
+            }, true);
         }
     });
 
@@ -315,8 +315,8 @@ function toggleFilterMenu() {
         return;
     }
 
-    button.style.borderColor = "var(--color-theme)";
-    button.style.boxShadow = "0 0 10px var(--color-theme)";
+    button.style.borderColor = "rgb(var(--color-theme))";
+    button.style.boxShadow = "0 0 10px rgb(var(--color-theme))";
     menu.style.display = "block";
     menu.style.opacity = "0";
     menu.style.transform = "transform";
@@ -402,9 +402,12 @@ function toggleChatMenu() {
         requestAnimationFrame(() => {
             menu.style.opacity = "1";
             menu.style.transform = "scale(1) translateY(0)";
-            chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
         });
     });
+    
+    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+    menu.style.display = "flex";
+    setUnreadDot(false);
     
     const close = (e) => {
         const btn = document.getElementById("chat-button");
@@ -724,11 +727,33 @@ fetch("/components/navbar.html")
     .catch(() => {});
 
     
+const chatMenu = document.getElementById("chat-menu");
 const chatMessagesContainer = document.getElementById("chat-messages");
 
-let lastSenderId = null;
+function setUnreadDot(visible) {
+    const btn = document.getElementById("chat-button");
+    if (!btn) return;
+    let dot = document.getElementById("chat-unread-dot");
+    if (visible && !dot) {
+        dot = document.createElement("span");
+        dot.id = "chat-unread-dot";
+        dot.className = "absolute top-2 right-2 w-2 h-2 rounded-full bg-fail pointer-events-none";
+        btn.style.position = "relative";
+        btn.appendChild(dot);
+    } else if (!visible && dot) {
+        dot.remove();
+    }
+}
 
-function renderChatMessage(message) {
+let lastSenderId = null;
+const chatTags = {
+    "System": {
+        color: "theme",
+        tag: "SYSTEM"
+    }
+}
+
+function renderChatMessage(message, welcome) {
     const isSelf = message.player.id === session.id;
 
     const d = new Date(message.timestamp * 1000);
@@ -739,12 +764,16 @@ function renderChatMessage(message) {
     lastSenderId = message.player.id;
 
     if (showHeader) {
+        const tag = chatTags[message.player.id];
         const header = document.createElement("div");
         header.className = `flex items-center ${isSelf ? "justify-end" : ""} gap-1 mt-3 px-1`;
         header.innerHTML = `
             ${isSelf ? `<span class="text-xs text-white/50">${time}</span>` : ""}
-            <span class="text-sm text-white font-bold">${message.player.username}</span>
-            ${!isSelf ? `<span class="text-xs text-white/50">${time}</span>` : ""}
+            <span class="text-sm text-${tag ? tag.color : "white"} font-bold">${message.player.username}</span>
+            ${tag ? `
+                <span class="text-xs bg-${tag.tagColor || tag.color} text-white rounded-lg px-1 py-0.5 ml-1">${tag.tag}</span>
+            ` : ""}
+            ${!isSelf ? `<span class="text-xs text-white/50 ml-1">${time}</span>` : ""}
         `;
         chatMessagesContainer.appendChild(header);
     }
@@ -755,6 +784,11 @@ function renderChatMessage(message) {
 
     chatMessagesContainer.appendChild(el);
     chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+    
+    if (!welcome) {
+        const menuOpen = chatMenu.style.display === "flex";
+        if (!menuOpen && !isSelf) setUnreadDot(true);
+    }
 }
 
 fetch("/lessons.json")
@@ -851,7 +885,7 @@ if (colorOptions) {
             "transition-all duration-200",
             "hover:opacity-100 hover:scale-110",
             isDefault ? "bg-transparent bg-center bg-no-repeat bg-[length:1.2em]" : "",
-            isCurrent ? "opacity-100 scale-110 shadow-[0_0_25px_var(--color-theme)]" : "opacity-50",
+            isCurrent ? "opacity-100 scale-110 shadow-[0_0_25px_rgb(var(--color-theme))]" : "opacity-50",
         ].join(" ");
 
         if (!isDefault) btn.style.backgroundColor = hex;
@@ -868,7 +902,7 @@ if (colorOptions) {
                 const active = child === btn;
                 child.classList.toggle("opacity-100", active);
                 child.classList.toggle("scale-110", active);
-                child.classList.toggle("shadow-[0_0_25px_var(--color-theme)]", active);
+                child.classList.toggle("shadow-[0_0_25px_rgb(var(--color-theme))]", active);
                 child.classList.toggle("opacity-50", !active);
             });
         });
@@ -883,7 +917,7 @@ if (disguiseOptions) {
         btn.className = [
             "flex items-center gap-2 rounded-full px-3 h-8 bg-accent cursor-pointer",
             "transition-all duration-200 hover:opacity-100",
-            isCurrent ? "bg-theme opacity-100 shadow-[0_0_10px_var(--color-theme)]" : "opacity-50",
+            isCurrent ? "bg-theme opacity-100 shadow-[0_0_10px_rgb(var(--color-theme))]" : "opacity-50",
         ].join(" ");
 
         const icon = document.createElement("span");
@@ -903,7 +937,7 @@ if (disguiseOptions) {
             Array.from(disguiseOptions.children).forEach(child => {
                 const active = child === btn;
                 child.classList.toggle("opacity-100", active);
-                child.classList.toggle("shadow-[0_0_10px_var(--color-theme)]", active);
+                child.classList.toggle("shadow-[0_0_10px_rgb(var(--color-theme))]", active);
                 child.classList.toggle("opacity-50", !active);
                 child.classList.toggle("bg-theme", active);
             });
