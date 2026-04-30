@@ -5622,7 +5622,16 @@
             "name": "Granny",
             "path": "/extras/Granny",
             "tags": [
-                "stratgy",
+                "strategy",
+                "adventure"
+            ]
+        },
+        {
+            "id": 2316,
+            "name": "Granny 2",
+            "path": "/extras/Granny2",
+            "tags": [
+                "strategy",
                 "adventure"
             ]
         }
