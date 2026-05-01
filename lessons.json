@@ -5643,6 +5643,15 @@
                 "casual",
                 "puzzle"
             ]
+        },
+        {
+            "id": 2318,
+            "name": "Granny 3",
+            "path": "/extras/Granny3",
+            "tags": [
+                "strategy",
+                "adventure"
+            ]
         }
     ]
 }
