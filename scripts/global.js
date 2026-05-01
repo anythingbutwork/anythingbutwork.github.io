@@ -273,8 +273,8 @@ function sendSuggestion(suggestion) {
     wsSend({ action: "suggest", player: session, suggestion });
 }
 
-function sendChatMessage(content) {
-    wsSend({ action: "chat", player: session, content });
+function sendChatMessage(content, reply) {
+    wsSend({ action: "chat", player: session, content, reply });
 }
 
 function checkForUpdates() {
@@ -541,8 +541,12 @@ function submitChatMessage(wasButton) {
         return;
     }
 
-    sendChatMessage(message);
+    sendChatMessage(message, replying);
     input.value = "";
+    
+    replying = null;
+    chatReplyingContainer.style.opacity = "0";
+    chatInput.placeholder = "Send a message...";
 }
 
 function injectNavbar(html) {
@@ -798,6 +802,9 @@ fetch("/components/navbar.html")
 const chatMenu = document.getElementById("chat-menu");
 const chatInput = document.getElementById("chat-input");
 const chatJump = document.getElementById("chat-jump");
+const chatReplying = document.getElementById("chat-replying-container");
+const chatReplyingTo = document.getElementById("chat-replying-to");
+const chatReplyingCancel = document.getElementById("chat-replying-cancel");
 const chatMessagesContainer = document.getElementById("chat-messages");
 
 function setUnreadDot(visible) {
@@ -816,6 +823,7 @@ function setUnreadDot(visible) {
 }
 
 let lastSenderId = null;
+let replying = null;
 const chatTags = {
     "System": {
         color: "theme",
@@ -882,10 +890,18 @@ function renderChatMessage(message, welcome) {
     }
 
     const el = document.createElement("li");
-    el.className = `${isSelf ? "bg-theme self-end ml-8" : "bg-lighter/75 self-start"} rounded-xl px-4 py-2 break-words min-w-0 max-w-full`;
+    el.className = `${isSelf ? "bg-theme self-end ml-8" : "bg-lighter/75 self-start"} rounded-xl px-4 py-2 break-words min-w-0 max-w-full cursor-pointer`;
     el.innerHTML = `<span class="text-sm text-white">${message.content}</span>`;
 
     chatMessagesContainer.appendChild(el);
+
+    el.addEventListener("click", (e) => {
+        replying = message.id;
+        chatReplyingTo.innerHTML = `Replying to <span class="text-white">${message.player.username}</span>`;
+        chatReplying.style.opacity = "1";
+        chatInput.placeholder = `Reply to ${message.player.username}...`;
+        chatInput.focus();
+    });
     
     const distFromBottom = chatMessagesContainer.scrollHeight - chatMessagesContainer.scrollTop - chatMessagesContainer.clientHeight;
     if (distFromBottom <= 500 || message.player.id === session.id) {
@@ -898,6 +914,12 @@ function renderChatMessage(message, welcome) {
         if (!menuOpen && !isSelf) setUnreadDot(true);
     }
 }
+
+chatReplyingCancel.addEventListener("click", (e) => {
+    replying = null;
+    chatInput.placeholder = "Send a message...";
+    chatReplying.style.opacity = "0";
+});
 
 chatMessagesContainer.addEventListener("scroll", updateJumpButton);
 
