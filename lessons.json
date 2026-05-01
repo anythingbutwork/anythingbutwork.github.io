@@ -5634,6 +5634,15 @@
                 "strategy",
                 "adventure"
             ]
+        },
+        {
+            "id": 2317,
+            "name": "Little Alchemy 2",
+            "path": "/extras/LittleAlchemy2",
+            "tags": [
+                "casual",
+                "puzzle"
+            ]
         }
     ]
 }
