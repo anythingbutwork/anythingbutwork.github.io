@@ -543,9 +543,8 @@ function submitChatMessage(wasButton) {
 
     sendChatMessage(message, replying);
     input.value = "";
-    
     replying = null;
-    chatReplyingContainer.style.opacity = "0";
+    chatReplying.style.opacity = "0";
     chatInput.placeholder = "Send a message...";
 }
 
@@ -891,7 +890,37 @@ function renderChatMessage(message, welcome) {
 
     const el = document.createElement("li");
     el.className = `${isSelf ? "bg-theme self-end ml-8" : "bg-lighter/75 self-start"} rounded-xl px-4 py-2 break-words min-w-0 max-w-full cursor-pointer`;
-    el.innerHTML = `<span class="text-sm text-white">${message.content}</span>`;
+
+    let replyPreviewHTML = "";
+    if (message.reply) {
+        const repliedEl = chatMessagesContainer.querySelector(`[data-message-id="${message.reply}"]`);
+        const repliedContent = repliedEl
+            ? repliedEl.querySelector("span.text-sm")?.textContent || ""
+            : "Message could not be loaded";
+        const truncated = repliedContent.length > 60 ? repliedContent.slice(0, 60) + "…" : repliedContent;
+
+        const replyPreview = document.createElement("div");
+        replyPreview.className = "flex items-center gap-1.5 mb-1.5 opacity-75 cursor-pointer hover:opacity-100 transition-opacity";
+        replyPreview.innerHTML = `
+            <img class="h-3 w-3 object-contain shrink-0" src="/assets/icons/reply.png">
+            <span class="text-xs text-white leading-tight truncate max-w-[180px]">${truncated}</span>
+        `;
+        replyPreview.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const target = chatMessagesContainer.querySelector(`[data-message-id="${message.reply}"]`);
+            if (target) {
+                target.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        });
+
+        el.appendChild(replyPreview);
+    }
+
+    el.dataset.messageId = message.id;
+    el.appendChild(Object.assign(document.createElement("span"), {
+        className: "text-sm text-white",
+        textContent: message.content
+    }));
 
     chatMessagesContainer.appendChild(el);
 
