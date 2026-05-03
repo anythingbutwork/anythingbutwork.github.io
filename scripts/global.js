@@ -730,7 +730,7 @@ function renderLessons(lessons) {
             <a href="/lesson/?id=${lesson.id}" class="group relative flex flex-col gap-2 ${lesson.lesson ? "opacity-10" : "opacity-100"}">
                 <div class="relative overflow-hidden rounded-xl">
                     <img
-                        src="${lesson.image || (lesson.path && lesson.path + "/icon.png") || `https://lesson126.github.io/img/lesson-${lesson.id}.png`}"
+                        src="${lesson.image || (lesson.path && lesson.path + "/icon.png") || `https://logs-psvq.onrender.com/proxy/https://lesson126.github.io/img/lesson-${lesson.id}.png`}"
                         class="game-icon w-full aspect-square object-cover"
                     />
 
