@@ -278,7 +278,13 @@ function sendChatMessage(content, reply) {
 }
 
 function checkForUpdates() {
-    fetch(`/version.txt`)
+    fetch(`/version.txt`, {
+        cache: "no-store",
+        headers: {
+            "Cache-Control": "no-cache",
+            "Pragma": "no-cache"
+        }
+    })
         .then(response => response.text())
         .then((response) => {
             if (version && version !== response) {
@@ -727,7 +733,7 @@ function renderLessons(lessons) {
         const playercount = getOnline(lesson.id);
 
         el.innerHTML = `
-            <a href="/lesson/?id=${lesson.id}" class="group relative flex flex-col gap-2 ${lesson.lesson ? "opacity-10" : "opacity-100"}">
+            <a href="/lesson/?id=${lesson.id}" class="group relative flex flex-col gap-2">
                 <div class="relative overflow-hidden rounded-xl">
                     <img
                         src="${lesson.image || (lesson.path && lesson.path + "/icon.png") || `https://logs-psvq.onrender.com/proxy/https://lesson126.github.io/img/lesson-${lesson.id}.png`}"
