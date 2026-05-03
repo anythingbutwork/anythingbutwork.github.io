@@ -35,9 +35,7 @@ fetch("/lessons.json")
       return;
     }
 
-    frame.src =
-      (lesson.path && lesson.path + "/game.html") ||
-      `https://damp-glitter-4d74.nickexe901.workers.dev/lesson?url=${encodeURIComponent(`https://lesson126.github.io/lesson${lessonGroup}/lesson-${lessonId}`)}`;
+    frame.src = (lesson.path && lesson.path + "/game.html") || `https://logs-psvq.onrender.com/lesson?url=${encodeURIComponent(`https://lesson126.github.io/lesson${lessonGroup}/lesson-${lessonId}`)}`;
     name.textContent = lesson.name;
 
     if (lesson.warning) {
@@ -63,21 +61,18 @@ window.addEventListener("message", (e) => {
   const { id, method, args } = e.data;
   let value = null;
 
-  if (method === "getItem") {
-    value = localStorage.getItem(args[0]);
-  } else if (method === "setItem") {
-    localStorage.setItem(args[0], args[1]);
-  } else if (method === "removeItem") {
-    localStorage.removeItem(args[0]);
-  } else if (method === "clear") {
+  if (method === "getItem") value = localStorage.getItem(args[0]);
+  else if (method === "setItem") localStorage.setItem(args[0], args[1]);
+  else if (method === "removeItem") localStorage.removeItem(args[0]);
+  else if (method === "clear")
     Object.keys(localStorage)
       .filter((k) => k.startsWith(args[0]))
       .forEach((k) => localStorage.removeItem(k));
-  } else if (method === "length") {
+  else if (method === "length")
     value = Object.keys(localStorage).filter((k) =>
       k.startsWith(args[0]),
     ).length;
-  } else if (method === "key") {
+  else if (method === "key") {
     const keys = Object.keys(localStorage).filter((k) => k.startsWith(args[0]));
     value = keys[args[1]] ?? null;
   }
