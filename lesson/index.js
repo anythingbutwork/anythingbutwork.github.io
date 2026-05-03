@@ -36,7 +36,7 @@ fetch("/lessons.json")
     }
 
     const targetUrl = `https://lesson126.github.io/lesson${lessonGroup}/lesson-${lessonId}/`; 
-    frame.src = (lesson.path && lesson.path + "/game.html") || `https://logs-psvq.onrender.com/lesson?url=${encodeURIComponent(targetUrl)}`;
+    frame.src = (lesson.path && lesson.path + "/game.html") || `https://logs-psvq.onrender.com/proxy/${targetUrl}`;
     name.textContent = lesson.name;
 
     if (lesson.warning) {
