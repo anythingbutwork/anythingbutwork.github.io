@@ -35,7 +35,8 @@ fetch("/lessons.json")
       return;
     }
 
-    frame.src = (lesson.path && lesson.path + "/game.html") || `https://logs-psvq.onrender.com/lesson?url=${encodeURIComponent(`https://lesson126.github.io/lesson${lessonGroup}/lesson-${lessonId}`)}`;
+    const targetUrl = `https://lesson126.github.io/lesson${lessonGroup}/lesson-${lessonId}/`; 
+    frame.src = (lesson.path && lesson.path + "/game.html") || `https://logs-psvq.onrender.com/lesson?url=${encodeURIComponent(targetUrl)}`;
     name.textContent = lesson.name;
 
     if (lesson.warning) {
