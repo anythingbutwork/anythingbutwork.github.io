@@ -252,8 +252,8 @@ input.widelight::placeholder {
   top: calc(100% + 10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
-  min-width: 400px;
-  max-width: 400px;
+  min-width: 500px;
+  max-width: 500px;
   max-height: 300px;
   overflow-y: auto;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
